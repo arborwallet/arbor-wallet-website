@@ -1,0 +1,16 @@
+{
+    "name": "wallet-web",
+    "version": "1.0.0",
+    "private": true,
+    "main": "dist/index.js",
+    "repository": "https://github.com/Digital-Farming-Initiative/wallet-web",
+    "author": "Digital Farming Initiative",
+    "contributors": [
+        {
+            "name": "Rigidity",
+            "email": "rigidity@rigidnetwork.com",
+            "url": "https://github.com/Rigidity"
+        }
+    ],
+    "license": "MIT"
+}
