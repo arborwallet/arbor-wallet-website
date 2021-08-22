@@ -15,6 +15,19 @@ export function unformatHash(text: string): string {
     return text;
 }
 
+export function encodeString(text: string) {
+    let array = new Uint8Array(text.length);
+    for (let i = 0; i < text.length; i++) array[i] = text.charCodeAt(i);
+    return array;
+}
+
+export function decodeString(array: Uint8Array) {
+    let text = '';
+    for (let i = 0; i < array.length; i++)
+        text += String.fromCharCode(array[i]);
+    return text;
+}
+
 export function addressToHash(address: string) {
     try {
         return toHexString(
@@ -65,14 +78,15 @@ function convertBits(
     return ret;
 }
 
-function toHexString(byteArray: number[]) {
+export function toHexString(byteArray: number[]) {
     return byteArray
         .map((byte) => {
             return ('0' + (byte & 0xff).toString(16)).slice(-2);
         })
         .join('');
 }
-function toByteArray(hexString: string) {
+
+export function toByteArray(hexString: string) {
     var result = [];
     for (var i = 0; i < hexString.length; i += 2) {
         result.push(parseInt(hexString.substr(i, 2), 16));

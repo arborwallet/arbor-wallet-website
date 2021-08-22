@@ -63,5 +63,5 @@ if (process.env.NODE_ENV !== 'production') {
 export const loggerMiddleware = expressWinston.logger({
     winstonInstance: logger,
     msg: 'HTTP {{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}',
-    meta: true,
+    meta: false,
 });

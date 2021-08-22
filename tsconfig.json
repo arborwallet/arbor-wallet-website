@@ -10,6 +10,7 @@
         "noFallthroughCasesInSwitch": true,
         "outDir": "dist",
         "sourceMap": true,
+        "skipLibCheck": true,
         "strict": true
     },
     "include": ["src/**/*"]
