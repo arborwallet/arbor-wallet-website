@@ -1,13 +1,13 @@
 import dotenv from 'dotenv';
 import express from 'express';
-import { logger, middleware } from './utils/logger';
+import { logger, loggerMiddleware } from './utils/logger';
 
 // Reads the environment variables from the .env file.
 dotenv.config();
 
 // Sets up the express application instance with middleware.
 const app = express();
-app.use(middleware);
+app.use(loggerMiddleware);
 
 app.get('/', (req, res) => {
     res.status(200).send('Nothing to see here.');
