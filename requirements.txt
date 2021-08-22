@@ -1,0 +1,3 @@
+blspy==1.0.5
+clvm==0.9.7
+clvm-tools==0.4.3

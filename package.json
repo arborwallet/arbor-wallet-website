@@ -7,7 +7,7 @@
     "author": "Digital Farming Initiative",
     "scripts": {
         "build": "tsc",
-        "start": "node --enable-source-maps ."
+        "start": "source venv/bin/activate && node --enable-source-maps ."
     },
     "contributors": [
         {
@@ -19,6 +19,7 @@
     "license": "MIT",
     "dependencies": {
         "@types/dotenv": "^8.2.0",
+        "@types/shell-quote": "^1.7.1",
         "bech32": "^2.0.0",
         "dotenv": "^10.0.0",
         "express": "^4.17.1",
