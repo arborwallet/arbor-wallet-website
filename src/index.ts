@@ -5,17 +5,20 @@ import ChiaUtils from 'chia-utils';
 import dotenv from 'dotenv';
 import express from 'express';
 import path from 'path';
-import { BLS } from './blsjs';
+import { BLS, Signature } from './blsjs';
 import {
+    CoinRecord,
     GetAdditionsAndRemovals,
     GetBlockRecordByHeight,
     GetCoinRecordsByPuzzleHash,
+    PushTX,
 } from './types/rpc';
 import { WalletTransaction } from './types/WalletTransaction';
 import {
     addressToHash,
     getPrefix,
     hashToAddress,
+    toByteArray,
     toHexString,
 } from './utils/crypto';
 import { execCommand, rpc } from './utils/exec';
@@ -75,14 +78,14 @@ app.get('/api/v1/wallet', async (req, res) => {
         return res.status(400).send('Invalid public_key');
     const forkData = forks[fork];
     if (!forkData) return res.status(400).send('Invalid fork');
-    const compiled = await execCommand(
+    const result = await execCommand(
         `cd ${path.join(
             __dirname,
             '..',
             'puzzles'
         )} && opc -H "$(cdv clsp curry wallet.clsp -a 0x${public_key})"`
     );
-    const address = hashToAddress(compiled.split('\n')[0], fork);
+    const address = hashToAddress(result.split('\n')[0], fork);
     return res.status(200).send({
         address,
         fork: forkData,
@@ -130,6 +133,126 @@ app.get('/api/v1/balance', async (req, res) => {
             .filter((record) => !record.spent)
             .map((record) => record.coin.amount)
             .reduce((a, b) => a + b, 0),
+        fork,
+    });
+});
+
+// Sends a transaction from a wallet to a destination with a given amount.
+app.post('/api/v1/transactions', async (req, res) => {
+    const bls = await blsPromise;
+    const { private_key, destination, amount } = req.body;
+    if (!private_key) return res.status(400).send('Missing private_key');
+    if (typeof private_key !== 'string')
+        return res.status(400).send('Invalid private_key');
+    if (!destination) return res.status(400).send('Missing destination');
+    if (typeof destination !== 'string')
+        return res.status(400).send('Invalid destination');
+    if (!amount) return res.status(400).send('Missing amount');
+    if (typeof amount !== 'number')
+        return res.status(400).send('Invalid amount');
+    const destinationHash = addressToHash(destination);
+    if (!destinationHash) return res.status(400).send('Invalid destination');
+    const fork = forks[getPrefix(destination)!];
+    if (!fork) return res.status(400).send('Invalid fork');
+    if (!/[0-9a-fA-F]+/.test(private_key))
+        return res.status(400).send('Invalid private_key');
+    const amountNumber = +amount;
+    if (
+        !isFinite(amountNumber) ||
+        Math.floor(amountNumber) !== amountNumber ||
+        amountNumber <= 0
+    )
+        return res.status(400).send('Invalid amount');
+    const privateKeyObject = bls.PrivateKey.fromBytes(
+        Uint8Array.from(toByteArray(private_key)),
+        false
+    );
+    const publicKeyObject = privateKeyObject.getPublicKey();
+    const public_key = toHexString([...publicKeyObject.serialize()]);
+    const result = await execCommand(
+        `cd ${path.join(
+            __dirname,
+            '..',
+            'puzzles'
+        )} && opc -H "$(cdv clsp curry wallet.clsp -a 0x${public_key})"`
+    );
+    const lines = result.trim().split('\n');
+    const puzzleHash = lines[0];
+    const serializedPuzzle = lines.slice(1).join('');
+    const address = hashToAddress(puzzleHash, fork.ticker);
+    const coinRecordResult: GetCoinRecordsByPuzzleHash = await rpc(
+        'get_coin_records_by_puzzle_hash',
+        {
+            puzzle_hash: puzzleHash,
+            include_spent_coins: true,
+        }
+    );
+    if (!coinRecordResult.success) {
+        return res.status(500).send(coinRecordResult.error);
+    }
+    const records = coinRecordResult.coin_records.filter(
+        (record) => !record.spent
+    );
+    records.sort((a, b) => b.coin.amount - a.coin.amount);
+    const spendRecords: CoinRecord[] = [];
+    let spendAmount = 0;
+    calculator: while (records.length && spendAmount < amountNumber) {
+        for (let i = 0; i < records.length; i++) {
+            if (spendAmount + records[i].coin.amount <= amountNumber) {
+                spendRecords.push(records.splice(i, 1)[0]);
+                continue calculator;
+            }
+        }
+        spendRecords.push(records.shift()!);
+    }
+    if (spendAmount < amount) return res.status(400).send('Insufficient funds');
+    const defaultHash =
+        'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855';
+    const solution = `${amountNumber} 0x${destinationHash} ${
+        spendAmount - amountNumber
+    } 0x${puzzleHash}`;
+    const hashResult = await execCommand(`run '(sha256 ${solution})'`);
+    const solutionHash = hashResult.trim().slice(2);
+    const agg_sig_me_extra_data = toByteArray(
+        'ccd5bb71183532bff220ba46c268991a3ff07eb358e8255a65c30a2dce0e5fbb'
+    );
+    const signatures: Signature[] = spendRecords.map((record, i) =>
+        privateKeyObject.sign(
+            Uint8Array.from([
+                ...toByteArray(i === 0 ? solutionHash : defaultHash),
+                ...toByteArray(
+                    ChiaUtils.get_coin_info_mojo(
+                        record.coin.parent_coin_info,
+                        record.coin.puzzle_hash,
+                        record.coin.amount
+                    )
+                ),
+                ...agg_sig_me_extra_data,
+            ])
+        )
+    );
+    const aggregateSignature = Signature.aggregateSigs(signatures);
+    const serializedSolutionResult = await execCommand(`opc '(${solution})'`);
+    const serializedSolution = serializedSolutionResult.trim();
+    const serializedDefaultSolution = 'ff80ff80ff80ff8080';
+    const pushTX: PushTX = await rpc('push_tx', {
+        spend_bundle: {
+            coin_solutions: spendRecords.map((record, i) => {
+                return {
+                    coin: record.coin,
+                    puzzle_reveal: serializedPuzzle,
+                    solution:
+                        i === 0
+                            ? serializedSolution
+                            : serializedDefaultSolution,
+                };
+            }),
+            aggregated_signature:
+                '0x' + toHexString([...aggregateSignature.serialize()]),
+        },
+    });
+    if (!pushTX.success) return res.status(500).send(pushTX.error);
+    return res.status(200).send({
         fork,
     });
 });

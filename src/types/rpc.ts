@@ -1,3 +1,10 @@
+export type PushTX = PushTXSuccess | RPCError;
+
+export interface PushTXSuccess {
+    status: string;
+    success: true;
+}
+
 export type GetCoinRecordsByPuzzleHash =
     | GetCoinRecordsByPuzzleHashSuccess
     | RPCError;
