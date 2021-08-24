@@ -1,7 +1,7 @@
 import { bech32m } from 'bech32';
-import { createHash } from 'crypto';
+import { BinaryLike, createHash } from 'crypto';
 
-export function sha256(text: string): string {
+export function sha256(text: BinaryLike): string {
     return createHash('sha256').update(text).digest('hex');
 }
 

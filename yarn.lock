@@ -193,6 +193,11 @@ chalk@^2.4.2:
     escape-string-regexp "^1.0.5"
     supports-color "^5.3.0"
 
+chia-utils@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/chia-utils/-/chia-utils-1.0.5.tgz#c51a06d652c1b7a9ceb0b336ec33956a2916c672"
+  integrity sha512-jYarns5KJBIXOStBkpisXwvI0WvanSm1IaXamu6K7ZawbMt1wodK1UrRAbQpw+I6M91ElRN5uomoI77MRRO94Q==
+
 cipher-base@^1.0.1, cipher-base@^1.0.3:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/cipher-base/-/cipher-base-1.0.4.tgz#8760e4ecc272f4c363532f926d874aae2c1397de"
@@ -764,6 +769,11 @@ sha.js@^2.4.0, sha.js@^2.4.8:
   dependencies:
     inherits "^2.0.1"
     safe-buffer "^5.0.1"
+
+shell-quote@^1.7.2:
+  version "1.7.2"
+  resolved "https://registry.yarnpkg.com/shell-quote/-/shell-quote-1.7.2.tgz#67a7d02c76c9da24f99d20808fcaded0e0e04be2"
+  integrity sha512-mRz/m/JVscCrkMyPqHc/bczi3OQHkLTqXHEFu0zDhK/qfv3UcOA4SVmRCLmos4bhjr9ekVQubj/R7waKapmiQg==
 
 simple-swizzle@^0.2.2:
   version "0.2.2"
