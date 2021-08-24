@@ -50,7 +50,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(loggerMiddleware);
 
 // Generates a mnemonic phrase, public key, and private key.
-app.get('/keygen', async (req, res) => {
+app.get('/api/v1/keygen', async (req, res) => {
     const bls = await blsPromise;
     const mnemonic = generateMnemonic();
     const seed = await mnemonicToSeed(mnemonic);
@@ -64,7 +64,7 @@ app.get('/keygen', async (req, res) => {
 });
 
 // Generates a wallet address from a public key on a fork.
-app.get('/wallet', async (req, res) => {
+app.get('/api/v1/wallet', async (req, res) => {
     const { public_key, fork } = req.body;
     if (!public_key) return res.status(400).send('Missing public_key');
     if (typeof public_key !== 'string')
@@ -90,7 +90,7 @@ app.get('/wallet', async (req, res) => {
 });
 
 // Recovers a public key and private key.
-app.get('/recover', async (req, res) => {
+app.get('/api/v1/recover', async (req, res) => {
     const bls = await blsPromise;
     const { phrase } = req.body;
     if (!phrase) return res.status(400).send('Missing phrase');
@@ -106,7 +106,7 @@ app.get('/recover', async (req, res) => {
 });
 
 // Fetches the balance of a puzzle.
-app.get('/balance', async (req, res) => {
+app.get('/api/v1/balance', async (req, res) => {
     const { address } = req.body;
     if (!address) return res.status(400).send('Missing address');
     if (typeof address !== 'string')
@@ -135,7 +135,7 @@ app.get('/balance', async (req, res) => {
 });
 
 // Fetches a computed list of transactions, paginated and sorted.
-app.get('/transactions', async (req, res) => {
+app.get('/api/v1/transactions', async (req, res) => {
     const { address } = req.body;
     if (!address) return res.status(400).send('Missing address');
     if (typeof address !== 'string')
