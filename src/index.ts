@@ -62,8 +62,8 @@ app.get('/api/v1/keygen', async (req, res) => {
         const publicKey = privateKey.get_g1();
         res.status(200).send({
             phrase: mnemonic,
-            privateKey: toHexString([...privateKey.serialize()]),
-            publicKey: toHexString([...publicKey.serialize()]),
+            private_key: toHexString([...privateKey.serialize()]),
+            public_key: toHexString([...publicKey.serialize()]),
         });
     } catch (error) {
         logger.error(`${error}`);
@@ -116,8 +116,8 @@ app.get('/api/v1/recover', async (req, res) => {
         const publicKey = privateKey.get_g1();
         res.status(200).send({
             phrase,
-            privateKey: toHexString([...privateKey.serialize()]),
-            publicKey: toHexString([...publicKey.serialize()]),
+            private_key: toHexString([...privateKey.serialize()]),
+            public_key: toHexString([...publicKey.serialize()]),
         });
     } catch (error) {
         logger.error(`${error}`);
