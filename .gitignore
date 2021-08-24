@@ -1,3 +1,7 @@
+# Chialisp
+puzzles/*.sym
+puzzles/*.hex
+
 # VirtualEnv
 venv/
 

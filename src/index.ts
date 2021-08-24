@@ -4,6 +4,7 @@ import loadBls from 'bls-signatures';
 import ChiaUtils from 'chia-utils';
 import dotenv from 'dotenv';
 import express from 'express';
+import path from 'path';
 import { BLS } from './blsjs';
 import {
     GetAdditionsAndRemovals,
@@ -11,8 +12,13 @@ import {
     GetCoinRecordsByPuzzleHash,
 } from './types/rpc';
 import { WalletTransaction } from './types/WalletTransaction';
-import { addressToHash, toHexString } from './utils/crypto';
-import { rpc } from './utils/exec';
+import {
+    addressToHash,
+    getPrefix,
+    hashToAddress,
+    toHexString,
+} from './utils/crypto';
+import { execCommand, rpc } from './utils/exec';
 import { logger, loggerMiddleware } from './utils/logger';
 
 // Reads the environment variables from the .env file.
@@ -21,6 +27,22 @@ dotenv.config();
 // BLS instance, there's some sort of typing issue that will need to be fixed later.
 export const blsPromise: Promise<BLS> = (loadBls as any)();
 
+// A list of Chia forks.
+interface Fork {
+    name: string;
+    ticker: string;
+    unit: string;
+    precision: number;
+}
+const forks: Record<string, Fork> = {
+    xch: {
+        name: 'Chia',
+        ticker: 'xch',
+        unit: 'mojo',
+        precision: 12,
+    },
+};
+
 // Sets up the express application instance with middleware.
 export const app = express();
 app.use(express.json());
@@ -28,7 +50,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(loggerMiddleware);
 
 // Generates a mnemonic phrase, public key, and private key.
-app.get('/keypair/generate', async (req, res) => {
+app.get('/keygen', async (req, res) => {
     const bls = await blsPromise;
     const mnemonic = generateMnemonic();
     const seed = await mnemonicToSeed(mnemonic);
@@ -41,8 +63,34 @@ app.get('/keypair/generate', async (req, res) => {
     });
 });
 
+// Generates a wallet address from a public key on a fork.
+app.get('/wallet', async (req, res) => {
+    const { public_key, fork } = req.body;
+    if (!public_key) return res.status(400).send('Missing public_key');
+    if (typeof public_key !== 'string')
+        return res.status(400).send('Invalid public_key');
+    if (!fork) return res.status(400).send('Missing fork');
+    if (typeof fork !== 'string') return res.status(400).send('Invalid fork');
+    if (!/[0-9a-fA-F]+/.test(public_key))
+        return res.status(400).send('Invalid public_key');
+    const forkData = forks[fork];
+    if (!forkData) return res.status(400).send('Invalid fork');
+    const compiled = await execCommand(
+        `cd ${path.join(
+            __dirname,
+            '..',
+            'puzzles'
+        )} && opc -H "$(cdv clsp curry wallet.clsp -a 0x${public_key})"`
+    );
+    const address = hashToAddress(compiled.split('\n')[0], fork);
+    return res.status(200).send({
+        address,
+        fork: forkData,
+    });
+});
+
 // Recovers a public key and private key.
-app.get('/keypair/recover', async (req, res) => {
+app.get('/recover', async (req, res) => {
     const bls = await blsPromise;
     const { phrase } = req.body;
     if (!phrase) return res.status(400).send('Missing phrase');
@@ -57,14 +105,45 @@ app.get('/keypair/recover', async (req, res) => {
     });
 });
 
-// Fetches a computed list of transactions, paginated and sorted.
-app.get('/wallet/transactions', async (req, res) => {
+// Fetches the balance of a puzzle.
+app.get('/balance', async (req, res) => {
     const { address } = req.body;
     if (!address) return res.status(400).send('Missing address');
     if (typeof address !== 'string')
         return res.status(400).send('Invalid address');
-    const hash = addressToHash(req.body.address);
+    const hash = addressToHash(address);
     if (!hash) return res.status(400).send('Invalid address');
+    const fork = forks[getPrefix(address)!];
+    if (!fork) return res.status(400).send('Invalid address prefix');
+    const coinRecordResult: GetCoinRecordsByPuzzleHash = await rpc(
+        'get_coin_records_by_puzzle_hash',
+        {
+            puzzle_hash: hash,
+            include_spent_coins: true,
+        }
+    );
+    if (!coinRecordResult.success) {
+        return res.status(500).send(coinRecordResult.error);
+    }
+    res.status(200).send({
+        balance: coinRecordResult.coin_records
+            .filter((record) => !record.spent)
+            .map((record) => record.coin.amount)
+            .reduce((a, b) => a + b, 0),
+        fork,
+    });
+});
+
+// Fetches a computed list of transactions, paginated and sorted.
+app.get('/transactions', async (req, res) => {
+    const { address } = req.body;
+    if (!address) return res.status(400).send('Missing address');
+    if (typeof address !== 'string')
+        return res.status(400).send('Invalid address');
+    const hash = addressToHash(address);
+    if (!hash) return res.status(400).send('Invalid address');
+    const fork = forks[getPrefix(address)!];
+    if (!fork) return res.status(400).send('Invalid address prefix');
     const coinRecordResult: GetCoinRecordsByPuzzleHash = await rpc(
         'get_coin_records_by_puzzle_hash',
         {
@@ -163,16 +242,12 @@ app.get('/wallet/transactions', async (req, res) => {
         }
     }
     transactions.sort((a, b) => b.timestamp - a.timestamp);
-    console.log(
-        '\n\n\n' +
-            transactions
-                .map(
-                    (transaction, i) =>
-                        `#${i + 1} - ${transaction.type} ${transaction.amount}`
-                )
-                .join('\n')
-    );
-    res.status(200).send('OK');
+    res.status(200).send({
+        transactions: transactions.filter(
+            (transaction) => transaction.amount > 0
+        ),
+        fork,
+    });
 });
 
 // Listen on the configured port, falling back to port 80.

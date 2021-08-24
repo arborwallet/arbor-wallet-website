@@ -15,24 +15,32 @@ export function unformatHash(text: string): string {
     return text;
 }
 
-export function encodeString(text: string) {
+export function encodeString(text: string): Uint8Array {
     let array = new Uint8Array(text.length);
     for (let i = 0; i < text.length; i++) array[i] = text.charCodeAt(i);
     return array;
 }
 
-export function decodeString(array: Uint8Array) {
+export function decodeString(array: Uint8Array): string | null {
     let text = '';
     for (let i = 0; i < array.length; i++)
         text += String.fromCharCode(array[i]);
     return text;
 }
 
-export function addressToHash(address: string) {
+export function addressToHash(address: string): string | null {
     try {
         return toHexString(
             convertBits(bech32m.decode(address).words, 5, 8, false)
         );
+    } catch {
+        return null;
+    }
+}
+
+export function getPrefix(address: string): string | null {
+    try {
+        return bech32m.decode(address).prefix;
     } catch {
         return null;
     }
@@ -54,7 +62,7 @@ function convertBits(
     fromBits: number,
     toBits: number,
     pad: boolean
-) {
+): number[] {
     let acc = 0;
     let bits = 0;
     let maxv = (1 << toBits) - 1;
@@ -78,7 +86,7 @@ function convertBits(
     return ret;
 }
 
-export function toHexString(byteArray: number[]) {
+export function toHexString(byteArray: number[]): string {
     return byteArray
         .map((byte) => {
             return ('0' + (byte & 0xff).toString(16)).slice(-2);
@@ -86,7 +94,7 @@ export function toHexString(byteArray: number[]) {
         .join('');
 }
 
-export function toByteArray(hexString: string) {
+export function toByteArray(hexString: string): number[] {
     var result = [];
     for (var i = 0; i < hexString.length; i += 2) {
         result.push(parseInt(hexString.substr(i, 2), 16));
