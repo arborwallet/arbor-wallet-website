@@ -7,7 +7,7 @@
     "author": "Digital Farming Initiative",
     "scripts": {
         "build": "tsc",
-        "start": "source venv/bin/activate && node --enable-source-maps ."
+        "start": ". venv/bin/activate && node --enable-source-maps ."
     },
     "contributors": [
         {

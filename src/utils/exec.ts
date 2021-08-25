@@ -40,27 +40,24 @@ export async function rpc<I, O>(endpoint: string, data: I): Promise<O> {
         `curl ${[
             '--insecure',
             '--cert',
-            process.env.CHIA_CERT ??
-                path.join(
-                    os.homedir(),
-                    '.chia',
-                    'mainnet',
-                    'config',
-                    'ssl',
-                    'full_node',
-                    'private_full_node.crt'
-                ),
+            path.join(
+                process.env.CHIA_HOME ?? path.join(os.homedir(), '.chia'),
+                'mainnet',
+                'config',
+                'ssl',
+                'full_node',
+                'private_full_node.crt'
+            ),
             '--key',
-            process.env.CHIA_KEY ??
-                path.join(
-                    os.homedir(),
-                    '.chia',
-                    'mainnet',
-                    'config',
-                    'ssl',
-                    'full_node',
-                    'private_full_node.key'
-                ),
+            path.join(
+                process.env.CHIA_HOME ?? path.join(os.homedir(), '.chia'),
+                '.chia',
+                'mainnet',
+                'config',
+                'ssl',
+                'full_node',
+                'private_full_node.key'
+            ),
             '-d',
             quote([JSON.stringify(data)]),
             '-H',
