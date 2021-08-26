@@ -51,7 +51,6 @@ export async function rpc<I, O>(endpoint: string, data: I): Promise<O> {
             '--key',
             path.join(
                 process.env.CHIA_HOME ?? path.join(os.homedir(), '.chia'),
-                '.chia',
                 'mainnet',
                 'config',
                 'ssl',
