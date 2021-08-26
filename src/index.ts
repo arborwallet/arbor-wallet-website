@@ -360,7 +360,10 @@ app.get('/api/v1/transactions', async (req, res) => {
                     type: 'receive',
                     timestamp: entry.timestamp,
                     block: entry.confirmed_block_index,
-                    sender: parent.coin.puzzle_hash,
+                    sender: hashToAddress(
+                        parent.coin.puzzle_hash,
+                        fork.ticker
+                    )!,
                     amount: entry.coin.amount,
                 });
             }
@@ -397,7 +400,10 @@ app.get('/api/v1/transactions', async (req, res) => {
                             type: 'send',
                             timestamp: child.timestamp,
                             block: child.confirmed_block_index,
-                            destination: child.coin.puzzle_hash,
+                            destination: hashToAddress(
+                                child.coin.puzzle_hash,
+                                fork.ticker
+                            )!,
                             amount: child.coin.amount,
                         });
                     }
