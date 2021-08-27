@@ -18,20 +18,6 @@
     enabled "2.0.x"
     kuler "^2.0.0"
 
-"@types/bech32@^1.1.4":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@types/bech32/-/bech32-1.1.4.tgz#501590d41c81a5f1802e39d6be450e89ec6d75d6"
-  integrity sha512-LWSo7sw6NFc9u7HpMK6aPRa7lNw3NKYAEEQCvdFFLkMCgwzv+0/CySQeqdL9hUIsirThQJ4u6ax/0uKEN63Z2g==
-  dependencies:
-    bech32 "*"
-
-"@types/bip39@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@types/bip39/-/bip39-3.0.0.tgz#4b5b9e89196e0c6c3793f1950724b197018daf70"
-  integrity sha512-6CqBtChR2JHspepOd8Y2x2BYyq8GBN8hfrbBrbaj7s7j07kMaghvUPnsVTIYbr2c1yV0Pu50wBbVD56KSdalKQ==
-  dependencies:
-    bip39 "*"
-
 "@types/body-parser@*":
   version "1.19.1"
   resolved "https://registry.yarnpkg.com/@types/body-parser/-/body-parser-1.19.1.tgz#0c0174c42a7d017b818303d4b5d969cb0b75929c"
@@ -47,13 +33,6 @@
   dependencies:
     "@types/node" "*"
 
-"@types/dotenv@^8.2.0":
-  version "8.2.0"
-  resolved "https://registry.yarnpkg.com/@types/dotenv/-/dotenv-8.2.0.tgz#5cd64710c3c98e82d9d15844375a33bf1b45d053"
-  integrity sha512-ylSC9GhfRH7m1EUXBXofhgx4lUWmFeQDINW5oLuS+gxWdfUeW4zJdeVTYVkexEW+e2VUvlZR2kGnGGipAWR7kw==
-  dependencies:
-    dotenv "*"
-
 "@types/express-serve-static-core@^4.17.18":
   version "4.17.24"
   resolved "https://registry.yarnpkg.com/@types/express-serve-static-core/-/express-serve-static-core-4.17.24.tgz#ea41f93bf7e0d59cd5a76665068ed6aab6815c07"
@@ -62,13 +41,6 @@
     "@types/node" "*"
     "@types/qs" "*"
     "@types/range-parser" "*"
-
-"@types/express-winston@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@types/express-winston/-/express-winston-4.0.0.tgz#d6d2adaf58bae0954f579e22d0860f086384fc48"
-  integrity sha512-CCNvkHIRKIJGgt64naW7XvsXvw4NkVHHa3EDy63uZzruXaFhZb2+AE0HRZx90ph528D1gm+fx9dA1gmZZ2uzLw==
-  dependencies:
-    express-winston "*"
 
 "@types/express@^4.17.13":
   version "4.17.13"
@@ -86,9 +58,9 @@
   integrity sha512-YATxVxgRqNH6nHEIsvg6k2Boc1JHI9ZbH5iWFFv/MTkchz3b1ieGDa5T0a9RznNdI0KhVbdbWSN+KWWrQZRxTw==
 
 "@types/node@*", "@types/node@^16.7.0":
-  version "16.7.0"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.7.0.tgz#f0374c4e89d1fc1ef705caad3021ba34c1a9294c"
-  integrity sha512-e66BrnjWQ3BRBZ2+iA5e85fcH9GLNe4S0n1H0T3OalK2sXg5XWEFTO4xvmGrYQ3edy+q6fdOh5t0/HOY8OAqBg==
+  version "16.7.2"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.7.2.tgz#0465a39b5456b61a04d98bd5545f8b34be340cb7"
+  integrity sha512-TbG4TOx9hng8FKxaVrCisdaxKxqEwJ3zwHoCWXZ0Jw6mnvTInpaB99/2Cy4+XxpXtjNv9/TgfGSvZFyfV/t8Fw==
 
 "@types/node@11.11.6":
   version "11.11.6"
@@ -118,13 +90,6 @@
   resolved "https://registry.yarnpkg.com/@types/shell-quote/-/shell-quote-1.7.1.tgz#2d059091214a02c29f003f591032172b2aff77e8"
   integrity sha512-SWZ2Nom1pkyXCDohRSrkSKvDh8QOG9RfAsrt5/NsPQC4UQJ55eG0qClA40I+Gkez4KTQ0uDUT8ELRXThf3J5jw==
 
-"@types/winston@^2.4.4":
-  version "2.4.4"
-  resolved "https://registry.yarnpkg.com/@types/winston/-/winston-2.4.4.tgz#48cc744b7b42fad74b9a2e8490e0112bd9a3d08d"
-  integrity sha512-BVGCztsypW8EYwJ+Hq+QNYiT/MUyCif0ouBH+flrY66O5W+KIXAMML6E/0fJpm7VjIzgangahl5S03bJJQGrZw==
-  dependencies:
-    winston "*"
-
 accepts@~1.3.7:
   version "1.3.7"
   resolved "https://registry.yarnpkg.com/accepts/-/accepts-1.3.7.tgz#531bc726517a3b2b41f850021c6cc15eaab507cd"
@@ -150,7 +115,14 @@ async@^3.1.0:
   resolved "https://registry.yarnpkg.com/async/-/async-3.2.1.tgz#d3274ec66d107a47476a4c49136aacdb00665fc8"
   integrity sha512-XdD5lRO/87udXCMC9meWdYiR+Nq6ZjUfXidViUZGu2F1MO4T3XwZ1et0hb2++BgLfhyJwy44BGB/yx80ABx8hg==
 
-bech32@*, bech32@^2.0.0:
+axios@^0.19.2:
+  version "0.19.2"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.19.2.tgz#3ea36c5d8818d0d5f8a8a97a6d36b86cdc00cb27"
+  integrity sha512-fjgm5MvRHLhx+osE2xoekY70AhARk3a6hkN+3Io1jc00jtquGvxYlKlsFUhmUET0V5te6CcZI7lcv2Ym61mjHA==
+  dependencies:
+    follow-redirects "1.5.10"
+
+bech32@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/bech32/-/bech32-2.0.0.tgz#078d3686535075c8c79709f054b1b226a133b355"
   integrity sha512-LcknSilhIGatDAsY1ak2I8VtGaHNhgMSYVxFrGLXv+xLHytaKZKcaUJJUE7qmBr7h33o5YQwP55pMI0xmkpJwg==
@@ -160,7 +132,7 @@ binascii@0.0.2:
   resolved "https://registry.yarnpkg.com/binascii/-/binascii-0.0.2.tgz#a7f8a8801dbccf8b1756b743daa0fee9e2d9e0ee"
   integrity sha1-p/iogB28z4sXVrdD2qD+6eLZ4O4=
 
-bip39@*, bip39@^3.0.4:
+bip39@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/bip39/-/bip39-3.0.4.tgz#5b11fed966840b5e1b8539f0f54ab6392969b2a0"
   integrity sha512-YZKQlb752TrUWqHWj7XAwCSjYEgGAk+/Aas3V7NyjQeZYsztO8JnQUaCWhcnL4T+jL8nvB8typ2jRPzTlgugNw==
@@ -200,7 +172,25 @@ chalk@^2.4.2:
     escape-string-regexp "^1.0.5"
     supports-color "^5.3.0"
 
-chia-utils@^1.0.5:
+chia-client@^9.5.0:
+  version "9.5.0"
+  resolved "https://registry.yarnpkg.com/chia-client/-/chia-client-9.5.0.tgz#a6a5b32a97b617c9a6615a6e5508ee16cec59ef3"
+  integrity sha512-RbOeUotpVN2eZu7NS/ZpzXeFTd6Ix/pmKbnlt2gCLmR2kp8B976juCxoW2DazN4dSsGwyjVuVQVLXQc5hsqMbw==
+  dependencies:
+    axios "^0.19.2"
+    chia-utils "^1.0.2"
+    yaml "2.0.0-5"
+
+chia-tools@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/chia-tools/-/chia-tools-1.0.2.tgz#86c2e18d4de7fc6e3ae25dabef35fd2410c49d0d"
+  integrity sha512-Rr9dGopMzmLtmE+4XMgui1pjzG3tXGHxDqFEeERAvOV45BWJTQRwfRlRQAK8y0sY7gpS/KDqrnDS9YXM46YE+Q==
+  dependencies:
+    "@chiamine/bls-signatures" "^0.2.1-beta.2"
+    bech32 "^2.0.0"
+    bip39 "^3.0.4"
+
+chia-utils@^1.0.2:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/chia-utils/-/chia-utils-1.0.5.tgz#c51a06d652c1b7a9ceb0b336ec33956a2916c672"
   integrity sha512-jYarns5KJBIXOStBkpisXwvI0WvanSm1IaXamu6K7ZawbMt1wodK1UrRAbQpw+I6M91ElRN5uomoI77MRRO94Q==
@@ -316,6 +306,13 @@ debug@2.6.9:
   dependencies:
     ms "2.0.0"
 
+debug@=3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"
+  integrity sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==
+  dependencies:
+    ms "2.0.0"
+
 depd@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/depd/-/depd-1.1.2.tgz#9bcd52e14c097763e749b274c4346ed2e560b5a9"
@@ -326,7 +323,7 @@ destroy@~1.0.4:
   resolved "https://registry.yarnpkg.com/destroy/-/destroy-1.0.4.tgz#978857442c44749e4206613e37946205826abd80"
   integrity sha1-l4hXRCxEdJ5CBmE+N5RiBYJqvYA=
 
-dotenv@*, dotenv@^10.0.0:
+dotenv@^10.0.0:
   version "10.0.0"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-10.0.0.tgz#3d4227b8fb95f81096cdd2b66653fb2c7085ba81"
   integrity sha512-rlBi9d8jpv9Sf1klPjNfFAuWDjKLwTIJJ/VxtoTwIR6hnZxcEOQCZg2oIL3MWBYw5GpUDKOEnND7LXTbIpQ03Q==
@@ -361,7 +358,7 @@ etag@~1.8.1:
   resolved "https://registry.yarnpkg.com/etag/-/etag-1.8.1.tgz#41ae2eeb65efa62268aebfea83ac7d79299b0887"
   integrity sha1-Qa4u62XvpiJorr/qg6x9eSmbCIc=
 
-express-winston@*, express-winston@^4.1.0:
+express-winston@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/express-winston/-/express-winston-4.1.0.tgz#3fd3ecea55d50ff6aee49a66e1aaa3cba8b67c93"
   integrity sha512-0DaIjvNADBzC/K4Qw3UwEQc8HRjbajTaP/M43rw0LJpZcQ7SQTPfxkLsnx3ABHEO7EFNQXTpqL0BZPiwkGV8hg==
@@ -439,6 +436,13 @@ fn.name@1.x.x:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/fn.name/-/fn.name-1.1.0.tgz#26cad8017967aea8731bc42961d04a3d5988accc"
   integrity sha512-GRnmB5gPyJpAhTQdSZTSp9uaPSvl09KoYcMQtsB9rQoOmzs9dH6ffeccH+Z+cv6P68Hu5bC6JjRh4Ah/mHSNRw==
+
+follow-redirects@1.5.10:
+  version "1.5.10"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.5.10.tgz#7b7a9f9aea2fdff36786a94ff643ed07f4ff5e2a"
+  integrity sha512-0V5l4Cizzvqt5D44aTXbFZz+FtyXV1vrDN6qrelxtfYQKW0KO0W2T/hkE8xvGa/540LkZlkaUjO4ailYTFtHVQ==
+  dependencies:
+    debug "=3.1.0"
 
 forwarded@0.2.0:
   version "0.2.0"
@@ -881,7 +885,7 @@ winston-transport@^4.4.0:
     readable-stream "^2.3.7"
     triple-beam "^1.2.0"
 
-winston@*, winston@^3.3.3:
+winston@^3.3.3:
   version "3.3.3"
   resolved "https://registry.yarnpkg.com/winston/-/winston-3.3.3.tgz#ae6172042cafb29786afa3d09c8ff833ab7c9170"
   integrity sha512-oEXTISQnC8VlSAKf1KYSSd7J6IWuRPQqDdo8eoRNaYKLvwSb5+79Z3Yi1lrl6KDpU6/VWaxpakDAtb1oQ4n9aw==
@@ -895,3 +899,8 @@ winston@*, winston@^3.3.3:
     stack-trace "0.0.x"
     triple-beam "^1.3.0"
     winston-transport "^4.4.0"
+
+yaml@2.0.0-5:
+  version "2.0.0-5"
+  resolved "https://registry.yarnpkg.com/yaml/-/yaml-2.0.0-5.tgz#00906046dc119427b2b4f7cf9041d34682d1480b"
+  integrity sha512-qH5L5eqW8cyv/N1U6rkK/O0M7kOK3BSo48d05Ptm03ITNsVFwg6TQ47wR72Db/ULWH5RfNJv+CqnG17Pyn8eqQ==

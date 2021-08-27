@@ -27,6 +27,9 @@ This is rough documentation of the API for ArborWallet. It currently supports ba
 Either Receive Transaction or Send Transaction
 
 ## Endpoints
+All endpoints have the following properties.
+* `success` Boolean
+* `error` String (If `success` is `false`)
 
 ### GET `/api/v1/keygen`
 Creates a new cryptographically secure BIP-39 mnemonic phrase and AugSchemeMPL keypair.
@@ -61,8 +64,9 @@ Fetches a list of wallet style transactions on a given address.
 * `address` String
 #### Response
 * `transactions` Transaction List
+* `balance` Integer
 * `fork` Fork
-### POST `/api/v1/transactions`
+### GET `/api/v1/send`
 Sends a given amount to a destination, authorized by a private key. The wallet is calculated from the private key on the fly, so it doesn't have to be provided.
 #### Request
 * `private_key` String

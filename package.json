@@ -18,12 +18,8 @@
     ],
     "license": "MIT",
     "dependencies": {
-        "@chiamine/bls-signatures": "^0.2.1-beta.2",
-        "@types/dotenv": "^8.2.0",
-        "@types/shell-quote": "^1.7.1",
-        "bech32": "^2.0.0",
-        "bip39": "^3.0.4",
-        "chia-utils": "^1.0.5",
+        "chia-client": "^9.5.0",
+        "chia-tools": "^1.0.2",
         "dotenv": "^10.0.0",
         "express": "^4.17.1",
         "express-winston": "^4.1.0",
@@ -32,11 +28,8 @@
         "winston-daily-rotate-file": "^4.5.5"
     },
     "devDependencies": {
-        "@types/bech32": "^1.1.4",
-        "@types/bip39": "^3.0.0",
         "@types/express": "^4.17.13",
-        "@types/express-winston": "^4.0.0",
         "@types/node": "^16.7.0",
-        "@types/winston": "^2.4.4"
+        "@types/shell-quote": "^1.7.1"
     }
 }

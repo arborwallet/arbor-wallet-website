@@ -8,6 +8,8 @@
         "noImplicitOverride": true,
         "noImplicitThis": true,
         "noFallthroughCasesInSwitch": true,
+        "target": "ES6",
+        "module": "CommonJS",
         "outDir": "dist",
         "sourceMap": true,
         "skipLibCheck": true,

@@ -1,4 +1,4 @@
-export type WalletTransaction = SendTransaction | ReceiveTransaction;
+export type Transaction = SendTransaction | ReceiveTransaction;
 
 export interface SendTransaction {
     type: 'send';

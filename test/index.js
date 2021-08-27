@@ -1,4 +1,3 @@
-import assert from 'assert';
 import axios from 'axios';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -26,40 +25,23 @@ async function callAPI(method, route, data) {
     }
 }
 
-// Valid usages.
-const { data: keypair } = await callAPI('get', 'keygen', {});
-console.log('Expected keypair:', keypair);
-const { data: recovery } = await callAPI('get', 'recover', {
-    phrase: keypair.phrase,
+const { data: keypair } = await callAPI('get', 'recover', {
+    phrase: 'join please impose reason little citizen silk power mention any thing below',
 });
-assert.deepStrictEqual(keypair, recovery);
-console.log('Expected recovery:', recovery);
-const { data: send } = await callAPI('post', 'transactions', {
-    private_key:
-        '6cfbbd3b57ef8b162a1c758c737654b75bec07f33793b4fee2cfab7b2e6c68065',
+const { data: wallet } = await callAPI('get', 'wallet', {
+    public_key: keypair.public_key,
+    fork: 'xch',
+});
+const { data: balance } = await callAPI('get', 'balance', {
+    address: wallet.address,
+});
+const { data: transactions } = await callAPI('get', 'transactions', {
+    address: wallet.address,
+});
+const { data: send } = await callAPI('get', 'send', {
+    private_key: keypair.private_key,
     destination:
         'xch1cpvynt305wyhyp2vtljxguzwtwjs77yzhstqtgwx4mfcenkmtm7qpqh82t',
     amount: 1,
 });
-console.log(send);
-
-// Edge cases.
-try {
-    const edge = await callAPI('get', 'recover');
-    console.error('Edge case passed the test erroneously:', edge.data);
-    process.exit(1);
-} catch (error) {
-    console.error('Should be missing phrase', error.message);
-}
-try {
-    const edge = await callAPI('get', 'recover', {
-        phrase: 'test',
-    });
-    console.error('Edge case passed the test erroneously:', edge.data);
-    process.exit(1);
-} catch (error) {
-    console.error('Should be invalid phrase:', error.message);
-}
-
-// Successfully passed and failed all tests.
-console.log('Tests complete, no problems found.');
+console.log(keypair, wallet, balance, transactions, send);
