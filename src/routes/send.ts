@@ -181,6 +181,7 @@ app.get('/api/v1/send', async (req, res) => {
             } as Result<Send>);
         }
         return res.status(200).send({
+            success: true,
             fork,
             status: 'success',
         });
