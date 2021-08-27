@@ -181,10 +181,10 @@ chia-client@^9.5.0:
     chia-utils "^1.0.2"
     yaml "2.0.0-5"
 
-chia-tools@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/chia-tools/-/chia-tools-1.0.2.tgz#86c2e18d4de7fc6e3ae25dabef35fd2410c49d0d"
-  integrity sha512-Rr9dGopMzmLtmE+4XMgui1pjzG3tXGHxDqFEeERAvOV45BWJTQRwfRlRQAK8y0sY7gpS/KDqrnDS9YXM46YE+Q==
+chia-tools@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/chia-tools/-/chia-tools-1.0.3.tgz#74c55880d778fecad7e08e87cd04ce2e8a0abaa8"
+  integrity sha512-qK515c2VqcEFnk6Jn/tOKnoRqQBCvYohqdxcXMu8brN9Yl4iDdeoRZ3CVBx5khZBUhbIW5wYhd5qpYoWMhi1PA==
   dependencies:
     "@chiamine/bls-signatures" "^0.2.1-beta.2"
     bech32 "^2.0.0"

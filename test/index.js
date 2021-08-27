@@ -25,23 +25,7 @@ async function callAPI(method, route, data) {
     }
 }
 
-const { data: keypair } = await callAPI('get', 'recover', {
-    phrase: 'join please impose reason little citizen silk power mention any thing below',
-});
-const { data: wallet } = await callAPI('get', 'wallet', {
-    public_key: keypair.public_key,
-    fork: 'xch',
-});
-const { data: balance } = await callAPI('get', 'balance', {
-    address: wallet.address,
-});
 const { data: transactions } = await callAPI('get', 'transactions', {
-    address: wallet.address,
+    address: 'xch1tjlc9nvvkua9n44uz0eaz5jqw8k3w0mwz2drqcz9quvsda77hxmq6nqxyz',
 });
-const { data: send } = await callAPI('get', 'send', {
-    private_key: keypair.private_key,
-    destination:
-        'xch1cpvynt305wyhyp2vtljxguzwtwjs77yzhstqtgwx4mfcenkmtm7qpqh82t',
-    amount: 1,
-});
-console.log(keypair, wallet, balance, transactions, send);
+console.log(transactions);

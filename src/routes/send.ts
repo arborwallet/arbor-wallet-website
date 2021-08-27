@@ -127,7 +127,7 @@ app.get('/api/v1/send', async (req, res) => {
         }
         const defaultHash =
             'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855';
-        const solution = `${amount} 0x${destination.hash} ${
+        const solution = `${amount} ${destination.hash} ${
             spendAmount - amount
         } 0x${puzzleHash}`;
         const hashResult = await executeCommand(`run '(sha256 ${solution})'`);
