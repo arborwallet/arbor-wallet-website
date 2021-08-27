@@ -28,9 +28,9 @@ app.get('/api/v1/balance', async (req, res) => {
             } as Result<Balance>);
         }
         const fork = forks[address.prefix as ForkName];
-        const result = await fullNodes[address.prefix as ForkName].getCoins(
-            address.hash
-        );
+        const result = await fullNodes[
+            address.prefix as ForkName
+        ].getUnspentCoins(address.hash);
         if (!result.success) {
             return res.status(200).send({
                 success: false,
@@ -40,7 +40,6 @@ app.get('/api/v1/balance', async (req, res) => {
         res.status(200).send({
             success: true,
             balance: result.coin_records
-                .filter((record) => !record.spent)
                 .map((record) => +record.coin.amount)
                 .reduce((a, b) => a + b, 0),
             fork,

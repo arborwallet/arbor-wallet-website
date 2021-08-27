@@ -95,14 +95,14 @@ app.get('/api/v1/send', async (req, res) => {
         const lines = commandResult.trim().split('\n');
         const puzzleHash = lines[0];
         const serializedPuzzle = lines.slice(1).join('');
-        const result = await node.getCoins(puzzleHash);
+        const result = await node.getUnspentCoins(puzzleHash);
         if (!result.success) {
             return res.status(200).send({
                 success: false,
                 error: 'Could not fetch coin records',
             } as Result<Send>);
         }
-        const records = result.coin_records.filter((record) => !record.spent);
+        const records = result.coin_records;
         records.sort((a, b) => +b.coin.amount - +a.coin.amount);
         const spendRecords: CoinRecord[] = [];
         let spendAmount = 0;
