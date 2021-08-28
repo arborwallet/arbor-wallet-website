@@ -50,6 +50,19 @@ require('./routes/balance');
 require('./routes/transactions');
 require('./routes/send');
 
+app.get('/', (_req, res) =>
+    res.status(200).send(`
+        <body style="background-color: #AAFFAA; font-family: sans-serif;">
+            <center>
+                <h1>Digital Farming Initiative</h1>
+                <img width=150 height=150 src='https://cdn.discordapp.com/attachments/876522894858010774/880665834056474655/arbor-wallet-a-logo.png'>
+                <img width=150 height=150 src='https://cdn.discordapp.com/attachments/824082092194791424/881012471740121128/icononly.png'>
+                <h2>Coming soon...</h2>
+            </center>
+        </body>
+`)
+);
+
 // Listen on the configured port, falling back to port 80.
 const port = process.env.PORT ?? 80;
 app.listen(port, () =>
