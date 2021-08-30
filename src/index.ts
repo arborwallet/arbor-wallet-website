@@ -1,3 +1,4 @@
+import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import os from 'os';
@@ -14,6 +15,11 @@ export const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(loggerMiddleware);
+app.use(
+    cors({
+        origin: '*',
+    })
+);
 
 // Home directories for each fork network.
 export const networkHomes: Record<ForkName, string> = {

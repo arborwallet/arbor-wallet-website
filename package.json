@@ -18,8 +18,10 @@
     ],
     "license": "MIT",
     "dependencies": {
+        "@types/cors": "^2.8.12",
         "chia-client": "^9.5.0",
         "chia-tools": "^1.0.3",
+        "cors": "^2.8.5",
         "dotenv": "^10.0.0",
         "express": "^4.17.1",
         "express-winston": "^4.1.0",
