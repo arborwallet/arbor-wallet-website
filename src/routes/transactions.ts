@@ -15,7 +15,7 @@ import { Transactions } from '../types/routes/Transactions';
 import { Transaction } from '../types/Transaction';
 import { logger } from '../utils/logger';
 
-app.get('/api/v1/transactions', async (req, res) => {
+app.post('/api/v1/transactions', async (req, res) => {
     try {
         const { address: addressText } = req.body;
         if (!addressText) {

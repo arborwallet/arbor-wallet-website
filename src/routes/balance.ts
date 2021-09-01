@@ -5,7 +5,7 @@ import { Result } from '../types/Result';
 import { Balance } from '../types/routes/Balance';
 import { logger } from '../utils/logger';
 
-app.get('/api/v1/balance', async (req, res) => {
+app.post('/api/v1/balance', async (req, res) => {
     try {
         const { address: addressText } = req.body;
         if (!addressText) {

@@ -9,7 +9,7 @@ import { Result } from '../types/Result';
 import { Recover } from '../types/routes/Recover';
 import { logger } from '../utils/logger';
 
-app.get('/api/v1/recover', async (req, res) => {
+app.post('/api/v1/recover', async (req, res) => {
     try {
         const { phrase } = req.body;
         if (!phrase) {

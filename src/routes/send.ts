@@ -20,7 +20,7 @@ import { Send } from '../types/routes/Send';
 import { executeCommand } from '../utils/execute';
 import { logger } from '../utils/logger';
 
-app.get('/api/v1/send', async (req, res) => {
+app.post('/api/v1/send', async (req, res) => {
     try {
         const {
             private_key: privateKeyText,

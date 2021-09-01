@@ -7,7 +7,7 @@ import { Wallet } from '../types/routes/Wallet';
 import { executeCommand } from '../utils/execute';
 import { logger } from '../utils/logger';
 
-app.get('/api/v1/wallet', async (req, res) => {
+app.post('/api/v1/wallet', async (req, res) => {
     try {
         const { public_key: publicKeyText, fork: forkNameText } = req.body;
         if (!publicKeyText) {
