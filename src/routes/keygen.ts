@@ -10,7 +10,7 @@ import { Result } from '../types/Result';
 import { Keygen } from '../types/routes/Keygen';
 import { logger } from '../utils/logger';
 
-app.post('/api/v1/keygen', async (_req, res) => {
+app.get('/api/v1/keygen', async (_req, res) => {
     try {
         const mnemonic = randomMnemonic();
         const seed = await toSeed(mnemonic);
