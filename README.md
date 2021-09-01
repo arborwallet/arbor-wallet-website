@@ -31,13 +31,13 @@ All endpoints have the following properties.
 * `success` Boolean
 * `error` String (If `success` is `false`)
 
-### GET `/api/v1/keygen`
+### POST `/api/v1/keygen`
 Creates a new cryptographically secure BIP-39 mnemonic phrase and AugSchemeMPL keypair.
 #### Response
 * `phrase` String
 * `public_key` String
 * `private_key` String
-### GET `/api/v1/recover`
+### POST `/api/v1/recover`
 Recovers a keypair from a mnemonic phrase.
 #### Request
 * `phrase` String
@@ -45,7 +45,7 @@ Recovers a keypair from a mnemonic phrase.
 * `phrase` String
 * `public_key` String
 * `private_key` String
-### GET `/api/v1/wallet`
+### POST `/api/v1/wallet`
 Converts a public key to a light wallet address. Wallet updates will be on new API versions, so continue using this version for old wallets.
 #### Request
 * `public_key` String
@@ -53,12 +53,12 @@ Converts a public key to a light wallet address. Wallet updates will be on new A
 #### Response
 * `address` String
 * `fork` Fork
-### GET `/api/v1/balance`
+### POST `/api/v1/balance`
 * `address` String
 #### Response
 * `balance` Integer
 * `fork` Fork
-### GET `/api/v1/transactions`
+### POST `/api/v1/transactions`
 Fetches a list of wallet style transactions on a given address.
 #### Request
 * `address` String
@@ -66,7 +66,7 @@ Fetches a list of wallet style transactions on a given address.
 * `transactions` Transaction List
 * `balance` Integer
 * `fork` Fork
-### GET `/api/v1/send`
+### POST `/api/v1/send`
 Sends a given amount to a destination, authorized by a private key. The wallet is calculated from the private key on the fly, so it doesn't have to be provided.
 #### Request
 * `private_key` String
