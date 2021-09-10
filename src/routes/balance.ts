@@ -9,20 +9,20 @@ app.post('/api/v1/balance', async (req, res) => {
     try {
         const { address: addressText } = req.body;
         if (!addressText) {
-            return res.status(200).send({
+            return res.status(400).send({
                 success: false,
                 error: 'Missing address',
             } as Result<Balance>);
         }
         if (typeof addressText !== 'string') {
-            return res.status(200).send({
+            return res.status(400).send({
                 success: false,
                 error: 'Invalid address',
             } as Result<Balance>);
         }
         const address = addressInfo(addressText);
         if (!(address.prefix in forks)) {
-            return res.status(200).send({
+            return res.status(400).send({
                 success: false,
                 error: 'Invalid address prefix',
             } as Result<Balance>);
@@ -32,7 +32,7 @@ app.post('/api/v1/balance', async (req, res) => {
             address.prefix as ForkName
         ].getUnspentCoins(address.hash);
         if (!result.success) {
-            return res.status(200).send({
+            return res.status(500).send({
                 success: false,
                 error: 'Could not fetch coin records',
             } as Result<Balance>);
@@ -46,7 +46,7 @@ app.post('/api/v1/balance', async (req, res) => {
         } as Result<Balance>);
     } catch (error) {
         logger.error(`${error}`);
-        return res.status(200).send({
+        return res.status(500).send({
             success: false,
             error: 'Could not fetch balance',
         } as Result<Balance>);

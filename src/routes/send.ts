@@ -28,7 +28,7 @@ app.post('/api/v1/send', async (req, res) => {
             amount,
         } = req.body;
         if (!privateKeyText) {
-            return res.status(200).send({
+            return res.status(400).send({
                 success: false,
                 error: 'Missing private_key',
             } as Result<Send>);
@@ -37,25 +37,25 @@ app.post('/api/v1/send', async (req, res) => {
             typeof privateKeyText !== 'string' ||
             !/[0-9a-f]{64}/.test(privateKeyText)
         ) {
-            return res.status(200).send({
+            return res.status(400).send({
                 success: false,
                 error: 'Invalid private_key',
             } as Result<Send>);
         }
         if (!destinationText) {
-            return res.status(200).send({
+            return res.status(400).send({
                 success: false,
                 error: 'Missing destination',
             } as Result<Send>);
         }
         if (typeof destinationText !== 'string') {
-            return res.status(200).send({
+            return res.status(400).send({
                 success: false,
                 error: 'Invalid destination',
             } as Result<Send>);
         }
         if (!amount) {
-            return res.status(200).send({
+            return res.status(400).send({
                 success: false,
                 error: 'Missing amount',
             } as Result<Send>);
@@ -66,14 +66,14 @@ app.post('/api/v1/send', async (req, res) => {
             Math.floor(amount) !== amount ||
             amount <= 0
         ) {
-            return res.status(200).send({
+            return res.status(400).send({
                 success: false,
                 error: 'Invalid amount',
             } as Result<Send>);
         }
         const destination = addressInfo(destinationText);
         if (!(destination.prefix in forks)) {
-            return res.status(200).send({
+            return res.status(400).send({
                 success: false,
                 error: 'Invalid fork',
             } as Result<Send>);
@@ -97,7 +97,7 @@ app.post('/api/v1/send', async (req, res) => {
         const serializedPuzzle = lines.slice(1).join('');
         const result = await node.getUnspentCoins(puzzleHash);
         if (!result.success) {
-            return res.status(200).send({
+            return res.status(500).send({
                 success: false,
                 error: 'Could not fetch coin records',
             } as Result<Send>);
@@ -120,7 +120,7 @@ app.post('/api/v1/send', async (req, res) => {
             spendAmount += +record.coin.amount;
         }
         if (spendAmount < amount) {
-            return res.status(200).send({
+            return res.status(400).send({
                 success: false,
                 error: 'Insufficient funds',
             } as Result<Send>);
@@ -175,7 +175,7 @@ app.post('/api/v1/send', async (req, res) => {
         };
         const transaction = await node.pushTransaction(bundle as any);
         if (!transaction.success) {
-            return res.status(200).send({
+            return res.status(500).send({
                 success: false,
                 error: 'Could not send transaction',
             } as Result<Send>);
@@ -187,7 +187,7 @@ app.post('/api/v1/send', async (req, res) => {
         });
     } catch (error) {
         logger.error(`${error}`);
-        return res.status(200).send({
+        return res.status(500).send({
             success: false,
             error: 'Could not send transaction',
         } as Result<Send>);

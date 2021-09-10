@@ -24,7 +24,7 @@ app.get('/api/v1/keygen', async (_req, res) => {
         } as Result<Keygen>);
     } catch (error) {
         logger.error(`${error}`);
-        return res.status(200).send({
+        return res.status(500).send({
             success: false,
             error: 'Could not generate keypair',
         } as Result<Keygen>);

@@ -11,7 +11,7 @@ app.post('/api/v1/wallet', async (req, res) => {
     try {
         const { public_key: publicKeyText, fork: forkNameText } = req.body;
         if (!publicKeyText) {
-            return res.status(200).send({
+            return res.status(400).send({
                 success: false,
                 error: 'Missing public_key',
             } as Result<Wallet>);
@@ -20,19 +20,19 @@ app.post('/api/v1/wallet', async (req, res) => {
             typeof publicKeyText !== 'string' ||
             !/[0-9a-f]{96}/.test(publicKeyText)
         ) {
-            return res.status(200).send({
+            return res.status(400).send({
                 success: false,
                 error: 'Invalid public_key',
             } as Result<Wallet>);
         }
         if (!forkNameText) {
-            return res.status(200).send({
+            return res.status(400).send({
                 success: false,
                 error: 'Missing fork',
             } as Result<Wallet>);
         }
         if (!(forkNameText in forks)) {
-            return res.status(200).send({
+            return res.status(400).send({
                 success: false,
                 error: 'Invalid fork',
             } as Result<Wallet>);
@@ -54,7 +54,7 @@ app.post('/api/v1/wallet', async (req, res) => {
         } as Result<Wallet>);
     } catch (error) {
         logger.error(`${error}`);
-        return res.status(200).send({
+        return res.status(500).send({
             success: false,
             error: 'Could not generate wallet',
         } as Result<Wallet>);

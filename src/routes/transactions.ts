@@ -19,13 +19,13 @@ app.post('/api/v1/transactions', async (req, res) => {
     try {
         const { address: addressText } = req.body;
         if (!addressText) {
-            return res.status(200).send({
+            return res.status(400).send({
                 success: false,
                 error: 'Missing address',
             } as Result<Transactions>);
         }
         if (typeof addressText !== 'string') {
-            return res.status(200).send({
+            return res.status(400).send({
                 success: false,
                 error: 'Invalid address',
             } as Result<Transactions>);
@@ -35,7 +35,7 @@ app.post('/api/v1/transactions', async (req, res) => {
         const node = fullNodes[address.prefix as ForkName];
         const result = await node.getCoins(address.hash);
         if (!result.success) {
-            return res.status(200).send({
+            return res.status(500).send({
                 success: false,
                 error: 'Could not fetch coin records',
             } as Result<Transactions>);
@@ -63,7 +63,7 @@ app.post('/api/v1/transactions', async (req, res) => {
                     entry.confirmed_block_index
                 );
                 if (!result.success) {
-                    return res.status(200).send({
+                    return res.status(500).send({
                         success: false,
                         error: 'Could not fetch block',
                     } as Result<Transactions>);
@@ -72,7 +72,7 @@ app.post('/api/v1/transactions', async (req, res) => {
                     result.block_record.header_hash
                 );
                 if (!additionsAndRemovals.success) {
-                    return res.status(200).send({
+                    return res.status(500).send({
                         success: false,
                         error: 'Could not fetch additions and removals',
                     } as Result<Transactions>);
@@ -106,7 +106,7 @@ app.post('/api/v1/transactions', async (req, res) => {
                     entry.spent_block_index
                 );
                 if (!result.success) {
-                    return res.status(200).send({
+                    return res.status(500).send({
                         success: false,
                         error: 'Could not fetch block',
                     } as Result<Transactions>);
@@ -115,7 +115,7 @@ app.post('/api/v1/transactions', async (req, res) => {
                     result.block_record.header_hash
                 );
                 if (!additionsAndRemovals.success) {
-                    return res.status(200).send({
+                    return res.status(500).send({
                         success: false,
                         error: 'Could not fetch additions and removals',
                     } as Result<Transactions>);
@@ -162,7 +162,7 @@ app.post('/api/v1/transactions', async (req, res) => {
         } as Result<Transactions>);
     } catch (error) {
         logger.error(`${error}`);
-        return res.status(200).send({
+        return res.status(500).send({
             success: false,
             error: 'Could not fetch transactions',
         } as Result<Transactions>);
