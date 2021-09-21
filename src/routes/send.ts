@@ -88,7 +88,7 @@ app.post('/api/v1/send', async (req, res) => {
                 '..',
                 '..',
                 'puzzles'
-            )} && opc -H "$(cdv clsp curry wallet.clsp -a 0x${stringify(
+            )} && opc -H "$(cdv clsp curry wallet.clsp.hex -a 0x${stringify(
                 publicKey
             )})"`
         );

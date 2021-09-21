@@ -44,7 +44,7 @@ app.post('/api/v1/wallet', async (req, res) => {
                 '..',
                 '..',
                 'puzzles'
-            )} && opc -H "$(cdv clsp curry wallet.clsp -a 0x${publicKeyText})"`
+            )} && opc -H "$(cdv clsp curry wallet.clsp.hex -a 0x${publicKeyText})"`
         );
         const { address } = hashInfo(result.split('\n')[0], forkNameText);
         return res.status(200).send({

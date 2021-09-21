@@ -1,43 +1,17 @@
-; ------------------------------------------------- Wallet Puzzle -------------------------------------------------
-; This is an implementation of a wallet. To send an amount to a destination, aggregate multiple coins together.
-; On all of the coins except for the one the new coins are being sent from, the solution is blank, (() () () ()).
-; On one of the coins, specify the amount to send, where to send it to, the amount of change, and where to send it.
-; Everything is verified with the aggregated signature, so there is no chance of modification by a farmer or node.
-; -----------------------------------------------------------------------------------------------------------------
 (mod (
-    ; These arguments are curried into the puzzle when it is created.
-        PUBLIC_KEY ; The public key used to verify the signature.
-    ; These arguments are passed into the coin when it is spent
-        target_amount ; The amount that is being sent.
-        target_puzzle ; The puzzle we are sending a coin to.
-        change_amount ; The amount to send back to the wallet.
-        change_puzzle ; The puzzle this coin was locked with.
+        PUBLIC_KEY ; Public key used to verify the signature.
+        conditions ; List of conditions to output.
     )
+
     ; Include a list of condition codes into the puzzle.
     (include condition_codes.clib)
-    ; A list of conditions to send to the network.
+    (include sha256tree.clib)
+
     (c
-        ; Ensure that the passed in parameters match the signature.
-        (list AGG_SIG_ME PUBLIC_KEY (sha256 target_amount target_puzzle change_amount change_puzzle))
-        ; Check if there is a target puzzle on this coin.
-        (if (= target_puzzle ())
-            ; No conditions, because this coin is being aggregated.
-            ()
-            (c
-                ; Send the total amount to the target puzzle in one coin.
-                (list CREATE_COIN target_puzzle target_amount)
-                ; Check if there is any change.
-                (if (> change_amount 0)
-                    ; Send the change amount to the change puzzle.
-                    (c
-                        (list CREATE_COIN change_puzzle change_amount)
-                        ; Nothing else to do, so we'll end the list.
-                        ()
-                    )
-                    ; No change, so end the list.
-                    ()
-                )
-            )
-        )
+        ; Ensure that the conditions are signed.
+        (list AGG_SIG_ME PUBLIC_KEY (sha256tree conditions))
+        
+        ; Output the rest of the conditions.
+        conditions
     )
 )
