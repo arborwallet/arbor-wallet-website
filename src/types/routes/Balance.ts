@@ -1,7 +1,6 @@
 import { Fork } from '../Fork';
-import { Success } from '../Result';
 
-export interface Balance extends Success {
+export interface Balance {
     balance: number;
     fork: Fork;
 }

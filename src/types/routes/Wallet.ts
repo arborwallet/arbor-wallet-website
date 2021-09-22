@@ -1,7 +1,6 @@
 import { Fork } from '../Fork';
-import { Success } from '../Result';
 
-export interface Wallet extends Success {
+export interface Wallet {
     address: string;
     fork: Fork;
 }

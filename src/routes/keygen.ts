@@ -1,32 +1,20 @@
-import {
-    generatePrivateKey,
-    generatePublicKey,
-    randomMnemonic,
-    stringify,
-    toSeed,
-} from 'chia-tools';
+import { Seed } from 'chia-tools';
 import { app } from '..';
-import { Result } from '../types/Result';
-import { Keygen } from '../types/routes/Keygen';
 import { logger } from '../utils/logger';
 
 app.get('/api/v1/keygen', async (_req, res) => {
     try {
-        const mnemonic = randomMnemonic();
-        const seed = await toSeed(mnemonic);
-        const privateKey = await generatePrivateKey(seed);
-        const publicKey = generatePublicKey(privateKey);
+        const mnemonic = Seed.mnemonic();
+        const seed = await Seed.from(mnemonic);
+        const privateKey = seed.getPrivateKey();
+        const publicKey = privateKey.getPublicKey();
         res.status(200).send({
-            success: true,
             phrase: mnemonic,
-            private_key: stringify(privateKey),
-            public_key: stringify(publicKey),
-        } as Result<Keygen>);
+            private_key: privateKey.toString(),
+            public_key: publicKey.toString(),
+        });
     } catch (error) {
         logger.error(`${error}`);
-        return res.status(500).send({
-            success: false,
-            error: 'Could not generate keypair',
-        } as Result<Keygen>);
+        return res.status(500).send('Could not generate keypair');
     }
 });

@@ -1,24 +1,23 @@
-import { CoinRecord } from 'chia-client/dist/src/types/FullNode/CoinRecord';
+import { concatBytes, hexToBytes } from 'bytes.ts';
 import {
-    addressInfo,
-    aggregate,
-    concatBytes,
-    encodeNumber,
-    generatePublicKey,
-    sign,
-    stringify,
-    stripHex,
-    toBytes,
-    toCoinId,
-    toPrivateKey,
+    Address,
+    CoinRecord,
+    CoinSpend,
+    Hash,
+    PrivateKey,
+    Signature,
 } from 'chia-tools';
 import path from 'path';
+import { quote } from 'shell-quote';
 import { app, fullNodes } from '..';
 import { ForkName, forks } from '../types/Fork';
-import { Result } from '../types/Result';
 import { Send } from '../types/routes/Send';
 import { executeCommand } from '../utils/execute';
 import { logger } from '../utils/logger';
+
+const extraData = hexToBytes(
+    'ccd5bb71183532bff220ba46c268991a3ff07eb358e8255a65c30a2dce0e5fbb'
+);
 
 app.post('/api/v1/send', async (req, res) => {
     try {
@@ -26,170 +25,128 @@ app.post('/api/v1/send', async (req, res) => {
             private_key: privateKeyText,
             destination: destinationText,
             amount,
+            fee,
         } = req.body;
-        if (!privateKeyText) {
-            return res.status(400).send({
-                success: false,
-                error: 'Missing private_key',
-            } as Result<Send>);
-        }
+        if (!privateKeyText) return res.status(400).send('Missing private_key');
         if (
             typeof privateKeyText !== 'string' ||
             !/[0-9a-f]{64}/.test(privateKeyText)
-        ) {
-            return res.status(400).send({
-                success: false,
-                error: 'Invalid private_key',
-            } as Result<Send>);
-        }
-        if (!destinationText) {
-            return res.status(400).send({
-                success: false,
-                error: 'Missing destination',
-            } as Result<Send>);
-        }
-        if (typeof destinationText !== 'string') {
-            return res.status(400).send({
-                success: false,
-                error: 'Invalid destination',
-            } as Result<Send>);
-        }
-        if (!amount) {
-            return res.status(400).send({
-                success: false,
-                error: 'Missing amount',
-            } as Result<Send>);
-        }
+        )
+            return res.status(400).send('Invalid private_key');
+        if (!destinationText)
+            return res.status(400).send('Missing destination');
+        if (typeof destinationText !== 'string')
+            return res.status(400).send('Invalid destination');
+        if (!amount) return res.status(400).send('Missing amount');
         if (
             typeof amount !== 'number' ||
             !isFinite(amount) ||
             Math.floor(amount) !== amount ||
             amount <= 0
-        ) {
-            return res.status(400).send({
-                success: false,
-                error: 'Invalid amount',
-            } as Result<Send>);
-        }
-        const destination = addressInfo(destinationText);
-        if (!(destination.prefix in forks)) {
-            return res.status(400).send({
-                success: false,
-                error: 'Invalid fork',
-            } as Result<Send>);
-        }
+        )
+            return res.status(400).send('Invalid amount');
+        if (!fee) return res.status(400).send('Missing fee');
+        if (
+            typeof fee !== 'number' ||
+            !isFinite(fee) ||
+            Math.floor(fee) !== fee ||
+            amount < 0
+        )
+            return res.status(400).send('Invalid fee');
+        const destination = new Address(destinationText);
+        if (!(destination.prefix in forks))
+            return res.status(400).send('Invalid fork');
         const fork = forks[destination.prefix as ForkName];
         const node = fullNodes[destination.prefix as ForkName];
-        const privateKey = await toPrivateKey(toBytes(privateKeyText));
-        const publicKey = generatePublicKey(privateKey);
-        const commandResult = await executeCommand(
+        const privateKey = await PrivateKey.from(privateKeyText);
+        const publicKey = privateKey.getPublicKey();
+        const compileResult = await executeCommand(
             `cd ${path.join(
                 __dirname,
                 '..',
                 '..',
                 'puzzles'
-            )} && opc -H "$(cdv clsp curry wallet.clsp.hex -a 0x${stringify(
-                publicKey
-            )})"`
+            )} && opc -H "$(cdv clsp curry wallet.clsp.hex -a 0x${publicKey})"`
         );
-        const lines = commandResult.trim().split('\n');
-        const puzzleHash = lines[0];
+        const lines = compileResult.trim().split('\n');
+        const puzzleHash = '0x' + lines[0];
         const serializedPuzzle = lines.slice(1).join('');
-        const result = await node.getUnspentCoins(puzzleHash);
-        if (!result.success) {
-            return res.status(500).send({
-                success: false,
-                error: 'Could not fetch coin records',
-            } as Result<Send>);
-        }
-        const records = result.coin_records;
-        records.sort((a, b) => +b.coin.amount - +a.coin.amount);
+        const coinRecordResult = await node.getCoinRecordsByPuzzleHash(
+            puzzleHash
+        );
+        if (!coinRecordResult.success)
+            return res.status(500).send('Could not fetch coin records');
+        const records = coinRecordResult.coin_records.filter(
+            (record) => !record.spent
+        );
+        records.sort((a, b) => b.coin.amount - a.coin.amount);
         const spendRecords: CoinRecord[] = [];
         let spendAmount = 0;
         calculator: while (records.length && spendAmount < amount) {
             for (let i = 0; i < records.length; i++) {
-                if (spendAmount + +records[i].coin.amount <= amount) {
+                if (spendAmount + records[i].coin.amount <= amount) {
                     const record = records.splice(i, 1)[0];
                     spendRecords.push(record);
-                    spendAmount += +record.coin.amount;
+                    spendAmount += record.coin.amount;
                     continue calculator;
                 }
             }
             const record = records.shift()!;
             spendRecords.push(record);
-            spendAmount += +record.coin.amount;
+            spendAmount += record.coin.amount;
         }
-        if (spendAmount < amount) {
-            return res.status(400).send({
-                success: false,
-                error: 'Insufficient funds',
-            } as Result<Send>);
-        }
-        const defaultHash =
-            'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855';
-        const solution = `${amount} ${destination.hash} ${
-            spendAmount - amount
-        } 0x${puzzleHash}`;
-        const hashResult = await executeCommand(`run '(sha256 ${solution})'`);
-        const solutionHash = hashResult.trim().slice(2);
-        const extraData = toBytes(
-            'ccd5bb71183532bff220ba46c268991a3ff07eb358e8255a65c30a2dce0e5fbb'
-        );
-        const signatures = [];
-        for (let i = 0; i < spendRecords.length; i++) {
-            signatures.push(
-                await sign(
-                    privateKey,
-                    concatBytes(
-                        toBytes(i === 0 ? solutionHash : defaultHash),
-                        toCoinId(
-                            toBytes(
-                                stripHex(spendRecords[i].coin.parent_coin_info)
-                            ),
-                            toBytes(stripHex(spendRecords[i].coin.puzzle_hash)),
-                            encodeNumber(+spendRecords[i].coin.amount)
-                        ),
-                        extraData
+        if (spendAmount < amount)
+            return res.status(400).send('Insufficient funds');
+        const signatures: Signature[] = [];
+        const spends: CoinSpend[] = [];
+        let target = true;
+        const destinationHash = destination.toHash();
+        for (const record of spendRecords) {
+            const change = spendAmount - amount - fee;
+            const solution = `((${
+                target
+                    ? `(51 ${destinationHash} ${amount})${
+                          change > 0 ? ` (51 ${puzzleHash} ${change})` : ''
+                      }`
+                    : ''
+            }))`;
+            target = false;
+            const solutionResult = new Hash(
+                (
+                    await executeCommand(
+                        `brun '(a (q 2 2 (c 2 (c 5 ()))) (c (q 2 (i (l 5) (q 11 (q . 2) (a 2 (c 2 (c 9 ()))) (a 2 (c 2 (c 13 ())))) (q 11 (q . 1) 5)) 1) 1))' '${solution}'`
                     )
+                ).trim()
+            );
+            const serializedSolution = (
+                await executeCommand(`opc ${quote([solution])}`)
+            ).trim();
+            const coinId = Hash.coin(record.coin);
+            signatures.push(
+                privateKey.sign(
+                    concatBytes(solutionResult.bytes, coinId.bytes, extraData)
                 )
             );
+            spends.push({
+                coin: record.coin,
+                puzzle_reveal: serializedPuzzle,
+                solution: serializedSolution,
+            });
         }
-        const aggregateSignature = await aggregate(signatures);
-        const serializedSolutionResult = await executeCommand(
-            `opc '(${solution})'`
-        );
-        const serializedSolution = serializedSolutionResult.trim();
-        const serializedDefaultSolution = 'ff80ff80ff80ff8080';
-        const bundle = {
-            coin_solutions: spendRecords.map((record, i) => {
-                return {
-                    coin: record.coin,
-                    puzzle_reveal: serializedPuzzle,
-                    solution:
-                        i === 0
-                            ? serializedSolution
-                            : serializedDefaultSolution,
-                };
-            }),
-            aggregated_signature: '0x' + stringify(aggregateSignature),
-        };
-        const transaction = await node.pushTransaction(bundle as any);
-        if (!transaction.success) {
-            return res.status(500).send({
-                success: false,
-                error: 'Could not send transaction',
-            } as Result<Send>);
-        }
-        return res.status(200).send({
-            success: true,
-            fork,
-            status: 'success',
+        const signature = await Signature.from(signatures);
+        const pushTxResult = await node.pushTx({
+            coin_spends: spends,
+            aggregated_signature: signature.toString(),
         });
+        if (!pushTxResult.success)
+            return res
+                .status(500)
+                .send('Could not push transaction to network');
+        res.status(200).send({
+            fork,
+        } as Send);
     } catch (error) {
         logger.error(`${error}`);
-        return res.status(500).send({
-            success: false,
-            error: 'Could not send transaction',
-        } as Result<Send>);
+        return res.status(500).send('Could not send transaction');
     }
 });

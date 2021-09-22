@@ -26,10 +26,10 @@ This is rough documentation of the API for ArborWallet. It currently supports ba
 ### Transaction Structure
 Either Receive Transaction or Send Transaction
 
-## Endpoints
-All endpoints have the following properties.
-* `success` Boolean
-* `error` String (If `success` is `false`)
+## Status Codes
+* `200` The request was valid and the response is the data requested.
+* `400` The request was invalid and the response is the error message.
+* `500` An internal error occurred and the response is the error message.
 
 ### POST `/api/v1/keygen`
 Creates a new cryptographically secure BIP-39 mnemonic phrase and AugSchemeMPL keypair.
@@ -37,6 +37,7 @@ Creates a new cryptographically secure BIP-39 mnemonic phrase and AugSchemeMPL k
 * `phrase` String
 * `public_key` String
 * `private_key` String
+
 ### POST `/api/v1/recover`
 Recovers a keypair from a mnemonic phrase.
 #### Request
@@ -45,6 +46,7 @@ Recovers a keypair from a mnemonic phrase.
 * `phrase` String
 * `public_key` String
 * `private_key` String
+
 ### POST `/api/v1/wallet`
 Converts a public key to a light wallet address. Wallet updates will be on new API versions, so continue using this version for old wallets.
 #### Request
@@ -53,11 +55,13 @@ Converts a public key to a light wallet address. Wallet updates will be on new A
 #### Response
 * `address` String
 * `fork` Fork
+
 ### POST `/api/v1/balance`
 * `address` String
 #### Response
 * `balance` Integer
 * `fork` Fork
+
 ### POST `/api/v1/transactions`
 Fetches a list of wallet style transactions on a given address.
 #### Request
@@ -66,12 +70,13 @@ Fetches a list of wallet style transactions on a given address.
 * `transactions` Transaction List
 * `balance` Integer
 * `fork` Fork
+
 ### POST `/api/v1/send`
 Sends a given amount to a destination, authorized by a private key. The wallet is calculated from the private key on the fly, so it doesn't have to be provided.
 #### Request
 * `private_key` String
-* `amount` Integer
 * `destination` String (Address)
+* `amount` Integer
+* `fee` Integer
 #### Response
-* `status` "success"
 * `fork` Fork
