@@ -1,8 +1,8 @@
 import { Fork } from '../Fork';
-import { Transaction } from '../Transaction';
+import { TransactionGroup } from '../TransactionGroup';
 
 export interface Transactions {
-    transactions: Transaction[];
+    transactions: TransactionGroup[];
     balance: number;
     fork: Fork;
 }

@@ -16,7 +16,12 @@ app.post('/api/v1/balance', async (req, res) => {
         const fork = forks[address.prefix as ForkName];
         const result = await fullNodes[
             address.prefix as ForkName
-        ].getCoinRecordsByPuzzleHash(address.toHash().toString());
+        ].getCoinRecordsByPuzzleHash(
+            address.toHash().toString(),
+            undefined,
+            undefined,
+            true
+        );
         if (!result.success)
             return res.status(500).send('Could not fetch coin records');
         res.status(200).send({

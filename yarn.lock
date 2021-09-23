@@ -198,10 +198,10 @@ chalk@^2.4.2:
     escape-string-regexp "^1.0.5"
     supports-color "^5.3.0"
 
-chia-tools@^2.1.2:
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/chia-tools/-/chia-tools-2.1.2.tgz#baff677b6bdb5b1e4c4f811be702eb3c131b4f37"
-  integrity sha512-Tn0/HFg4cOrmU7tRGTGnTQUz2b7ofVMeYCEIXzao1fs6wFzbmTCH7gssG0aXOdRZI95Xx91AcsuXwcI+KRpipQ==
+chia-tools@^2.1.3:
+  version "2.1.3"
+  resolved "https://registry.yarnpkg.com/chia-tools/-/chia-tools-2.1.3.tgz#6fad20e2ba6a846ae68b0c055a78a3a7d8d70270"
+  integrity sha512-an+BS2108a4LphSdovtv/Om3o0FKZ2i0stzNvJJaU2QTQz2wT2MAUDzAnk0TGRLPVC54V6oFvU0s70nd75jqZw==
   dependencies:
     "@chiamine/bls-signatures" "^0.2.1-beta.2"
     axios "^0.21.4"

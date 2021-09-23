@@ -2,103 +2,107 @@ import { Address, Hash } from 'chia-tools';
 import { app, fullNodes } from '..';
 import { ForkName, forks } from '../types/Fork';
 import { Transactions } from '../types/routes/Transactions';
-import { Transaction } from '../types/Transaction';
+import {
+    ReceiveTransactionGroup,
+    SendTransactionGroup,
+    TransactionGroup,
+} from '../types/TransactionGroup';
 import { logger } from '../utils/logger';
 
 app.post('/api/v1/transactions', async (req, res) => {
     try {
         const { address: addressText } = req.body;
         if (!addressText) return res.status(400).send('Missing address');
-        if (typeof addressText !== 'string') {
+        if (typeof addressText !== 'string')
             return res.status(400).send('Invalid address');
-        }
         const address = new Address(addressText);
         const fork = forks[address.prefix as ForkName];
         const node = fullNodes[address.prefix as ForkName];
-        const result = await node.getCoinRecordsByPuzzleHash(
-            address.toHash().toString()
+        const recordsResult = await node.getCoinRecordsByPuzzleHash(
+            address.toHash().toString(),
+            undefined,
+            undefined,
+            true
         );
-        if (!result.success)
+        if (!recordsResult.success)
             return res.status(500).send('Could not fetch coin records');
-        const transactions: Transaction[] = [];
-        for (const entry of result.coin_records) {
-            if (
-                !result.coin_records.find(
-                    (other) =>
-                        entry.coin.parent_coin_info ===
-                        Hash.coin(other.coin).toString()
-                )
-            ) {
-                const result = await node.getBlockRecordByHeight(
-                    entry.confirmed_block_index
-                );
-                if (!result.success)
-                    return res.status(500).send('Could not fetch block');
-                const additionsAndRemovals = await node.getAdditionsAndRemovals(
-                    result.block_record.header_hash
-                );
-                if (!additionsAndRemovals.success)
-                    return res
-                        .status(500)
-                        .send('Could not fetch additions and removals');
-                const parent = additionsAndRemovals.removals.find(
-                    (item) =>
-                        entry.coin.parent_coin_info ===
-                        Hash.coin(item.coin).toString()
-                )!;
-                transactions.push({
-                    type: 'receive',
-                    timestamp: entry.timestamp,
-                    block: entry.confirmed_block_index,
-                    sender: new Hash(parent.coin.puzzle_hash)
-                        .toAddress(fork.ticker)
+        const puzzleHash = address.toHash().toString();
+        const sent: SendTransactionGroup[] = [];
+        const received: Record<string, ReceiveTransactionGroup> = {};
+        for (const record of recordsResult.coin_records) {
+            if (record.coin.amount === 0) continue;
+            const parentResult = await node.getCoinRecordByName(
+                record.coin.parent_coin_info
+            );
+            if (!parentResult.success)
+                return res
+                    .status(500)
+                    .send('Could not fetch parent coin record');
+            if (parentResult.coin_record.coin.puzzle_hash !== puzzleHash) {
+                if (!(record.coin.parent_coin_info in received)) {
+                    received[record.coin.parent_coin_info] = {
+                        type: 'receive',
+                        transactions: [],
+                        timestamp: record.timestamp,
+                        block: record.confirmed_block_index,
+                        amount: record.coin.amount,
+                        fee: record.coin.amount,
+                    };
+                }
+                const group = received[record.coin.parent_coin_info];
+                group.transactions.push({
+                    sender: new Hash(parentResult.coin_record.coin.puzzle_hash)
+                        .toAddress(address.prefix)
                         .toString(),
-                    amount: entry.coin.amount,
+                    amount: record.coin.amount,
                 });
+                group.fee -= record.coin.amount;
             }
-            if (entry.spent) {
-                const result = await node.getBlockRecordByHeight(
-                    entry.spent_block_index
+            if (record.spent) {
+                const coinId = Hash.coin(record.coin).toString();
+                const blockResult = await node.getBlockRecordByHeight(
+                    record.spent_block_index
                 );
-                if (!result.success) {
+                if (!blockResult.success)
                     return res.status(500).send('Could not fetch block');
-                }
-                const additionsAndRemovals = await node.getAdditionsAndRemovals(
-                    result.block_record.header_hash
+                const updatesResult = await node.getAdditionsAndRemovals(
+                    blockResult.block_record.header_hash
                 );
-                if (!additionsAndRemovals.success) {
+                if (!updatesResult.success)
                     return res
                         .status(500)
                         .send('Could not fetch additions and removals');
-                }
-                const coinId: string = Hash.coin(entry.coin).toString();
-                const children = additionsAndRemovals.additions.filter(
-                    (addition) => addition.coin.parent_coin_info === coinId
-                );
-                for (const child of children) {
-                    if (child.coin.puzzle_hash !== entry.coin.puzzle_hash) {
-                        transactions.push({
-                            type: 'send',
-                            timestamp: +child.timestamp,
-                            block: child.confirmed_block_index,
+                const group: SendTransactionGroup = {
+                    type: 'send',
+                    transactions: [],
+                    timestamp: blockResult.block_record.timestamp!,
+                    block: record.spent_block_index,
+                    amount: record.coin.amount,
+                    fee: record.coin.amount,
+                };
+                for (const child of updatesResult.additions.filter(
+                    (record) => record.coin.parent_coin_info === coinId
+                )) {
+                    if (child.coin.puzzle_hash !== puzzleHash)
+                        group.transactions.push({
                             destination: new Hash(child.coin.puzzle_hash)
-                                .toAddress(fork.ticker)
+                                .toAddress(address.prefix)
                                 .toString(),
-                            amount: +child.coin.amount,
+                            amount: child.coin.amount,
                         });
-                    }
+                    group.fee -= child.coin.amount;
                 }
+                sent.push(group);
             }
         }
-        transactions.sort((a, b) => b.timestamp - a.timestamp);
         res.status(200).send({
-            transactions: transactions.filter(
-                (transaction) => transaction.amount > 0
-            ),
-            balance: transactions.reduce(
-                (a, b) => (b.type === 'receive' ? a + b.amount : a - b.amount),
-                0
-            ),
+            transactions: (Object.values(received) as TransactionGroup[])
+                .concat(sent)
+                .sort((a, b) => b.timestamp - a.timestamp),
+            balance: recordsResult.coin_records
+                .filter((record) => !record.spent)
+                .map((record) => +record.coin.amount)
+                .reduce((a, b) => a + b, 0),
             fork,
         } as Transactions);
     } catch (error) {
