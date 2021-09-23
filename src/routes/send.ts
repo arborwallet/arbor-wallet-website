@@ -5,7 +5,7 @@ import {
     CoinSpend,
     Hash,
     PrivateKey,
-    Signature,
+    Signature
 } from 'chia-tools';
 import path from 'path';
 import { quote } from 'shell-quote';
@@ -56,6 +56,7 @@ app.post('/api/v1/send', async (req, res) => {
         const destination = new Address(destinationText);
         if (!(destination.prefix in forks))
             return res.status(400).send('Invalid fork');
+        const totalAmount = amount + fee;
         const fork = forks[destination.prefix as ForkName];
         const node = fullNodes[destination.prefix as ForkName];
         const privateKey = await PrivateKey.from(privateKeyText);
@@ -82,9 +83,9 @@ app.post('/api/v1/send', async (req, res) => {
         records.sort((a, b) => b.coin.amount - a.coin.amount);
         const spendRecords: CoinRecord[] = [];
         let spendAmount = 0;
-        calculator: while (records.length && spendAmount < amount) {
+        calculator: while (records.length && spendAmount < totalAmount) {
             for (let i = 0; i < records.length; i++) {
-                if (spendAmount + records[i].coin.amount <= amount) {
+                if (spendAmount + records[i].coin.amount <= totalAmount) {
                     const record = records.splice(i, 1)[0];
                     spendRecords.push(record);
                     spendAmount += record.coin.amount;
@@ -95,14 +96,14 @@ app.post('/api/v1/send', async (req, res) => {
             spendRecords.push(record);
             spendAmount += record.coin.amount;
         }
-        if (spendAmount < amount)
+        if (spendAmount < totalAmount)
             return res.status(400).send('Insufficient funds');
         const signatures: Signature[] = [];
         const spends: CoinSpend[] = [];
         let target = true;
         const destinationHash = destination.toHash();
+        const change = spendAmount - amount - fee;
         for (const record of spendRecords) {
-            const change = spendAmount - amount - fee;
             const solution = `((${
                 target
                     ? `(51 ${destinationHash} ${amount})${
