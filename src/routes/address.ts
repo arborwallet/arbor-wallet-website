@@ -1,12 +1,12 @@
 import { Hash } from 'chia-tools';
 import path from 'path';
 import { app } from '..';
-import { ForkName, forks } from '../types/Fork';
-import { Wallet } from '../types/routes/Wallet';
+import { forks } from '../types/Fork';
+import { Address } from '../types/routes/Address';
 import { executeCommand } from '../utils/execute';
 import { logger } from '../utils/logger';
 
-app.post('/api/v1/wallet', async (req, res) => {
+app.post('/api/v1/address', async (req, res) => {
     try {
         const { public_key: publicKeyText, fork: forkNameText } = req.body;
         if (!publicKeyText) return res.status(400).send('Missing public_key');
@@ -18,7 +18,6 @@ app.post('/api/v1/wallet', async (req, res) => {
         if (!forkNameText) return res.status(400).send('Missing fork');
         if (!(forkNameText in forks))
             return res.status(400).send('Invalid fork');
-        const fork = forks[forkNameText as ForkName];
         const result = await executeCommand(
             `cd ${path.join(
                 __dirname,
@@ -31,8 +30,7 @@ app.post('/api/v1/wallet', async (req, res) => {
         const walletAddress = walletHash.toAddress(forkNameText);
         return res.status(200).send({
             address: walletAddress.toString(),
-            fork,
-        } as Wallet);
+        } as Address);
     } catch (error) {
         logger.error(`${error}`);
         return res.status(500).send('Could not generate wallet');

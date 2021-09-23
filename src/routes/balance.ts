@@ -13,7 +13,6 @@ app.post('/api/v1/balance', async (req, res) => {
         const address = new Address(addressText);
         if (!(address.prefix in forks))
             return res.status(400).send('Invalid address prefix');
-        const fork = forks[address.prefix as ForkName];
         const result = await fullNodes[
             address.prefix as ForkName
         ].getCoinRecordsByPuzzleHash(
@@ -29,7 +28,6 @@ app.post('/api/v1/balance', async (req, res) => {
                 .filter((record) => !record.spent)
                 .map((record) => +record.coin.amount)
                 .reduce((a, b) => a + b, 0),
-            fork,
         } as Balance);
     } catch (error) {
         logger.error(`${error}`);

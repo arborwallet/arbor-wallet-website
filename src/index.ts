@@ -27,12 +27,13 @@ export const fullNodes: Record<ForkName, FullNode> = {
 };
 
 // Requires all of the routes.
-require('./routes/keygen');
-require('./routes/wallet');
-require('./routes/recover');
+require('./routes/address');
 require('./routes/balance');
-require('./routes/transactions');
+require('./routes/fork');
+require('./routes/keygen');
+require('./routes/recover');
 require('./routes/send');
+require('./routes/transactions');
 
 // Listen on the configured port, falling back to port 80.
 const port = process.env.PORT ?? 80;

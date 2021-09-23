@@ -57,7 +57,6 @@ app.post('/api/v1/send', async (req, res) => {
         if (!(destination.prefix in forks))
             return res.status(400).send('Invalid fork');
         const totalAmount = amount + fee;
-        const fork = forks[destination.prefix as ForkName];
         const node = fullNodes[destination.prefix as ForkName];
         const privateKey = await PrivateKey.from(privateKeyText);
         const publicKey = privateKey.getPublicKey();
@@ -144,7 +143,7 @@ app.post('/api/v1/send', async (req, res) => {
                 .status(500)
                 .send('Could not push transaction to network');
         res.status(200).send({
-            fork,
+            status: 'success',
         } as Send);
     } catch (error) {
         logger.error(`${error}`);

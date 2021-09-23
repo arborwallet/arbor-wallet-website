@@ -1,4 +1,4 @@
-export interface Fork {
+export interface ForkInfo {
     name: string;
     ticker: string;
     unit: string;
@@ -7,7 +7,7 @@ export interface Fork {
 
 export type ForkName = 'xch';
 
-export const forks: Record<ForkName, Fork> = {
+export const forks: Record<ForkName, ForkInfo> = {
     xch: {
         name: 'Chia',
         ticker: 'xch',

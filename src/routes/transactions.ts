@@ -1,6 +1,6 @@
 import { Address, Hash } from 'chia-tools';
 import { app, fullNodes } from '..';
-import { ForkName, forks } from '../types/Fork';
+import { ForkName } from '../types/Fork';
 import { Transactions } from '../types/routes/Transactions';
 import {
     ReceiveTransactionGroup,
@@ -16,7 +16,6 @@ app.post('/api/v1/transactions', async (req, res) => {
         if (typeof addressText !== 'string')
             return res.status(400).send('Invalid address');
         const address = new Address(addressText);
-        const fork = forks[address.prefix as ForkName];
         const node = fullNodes[address.prefix as ForkName];
         const recordsResult = await node.getCoinRecordsByPuzzleHash(
             address.toHash().toString(),
@@ -99,11 +98,6 @@ app.post('/api/v1/transactions', async (req, res) => {
             transactions: (Object.values(received) as TransactionGroup[])
                 .concat(sent)
                 .sort((a, b) => b.timestamp - a.timestamp),
-            balance: recordsResult.coin_records
-                .filter((record) => !record.spent)
-                .map((record) => +record.coin.amount)
-                .reduce((a, b) => a + b, 0),
-            fork,
         } as Transactions);
     } catch (error) {
         logger.error(`${error}`);
