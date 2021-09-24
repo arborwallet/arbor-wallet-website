@@ -1,6 +1,6 @@
 import { Hash } from 'chia-tools';
 import path from 'path';
-import { app } from '..';
+import { app, fullNodes } from '..';
 import { forks } from '../types/Fork';
 import { Address } from '../types/routes/Address';
 import { executeCommand } from '../utils/execute';
@@ -18,6 +18,8 @@ app.post('/api/v1/address', async (req, res) => {
         if (!forkNameText) return res.status(400).send('Missing fork');
         if (!(forkNameText in forks))
             return res.status(400).send('Invalid fork');
+        if (!(forkNameText in fullNodes))
+            return res.status(400).send('Unimplemented fork');
         const result = await executeCommand(
             `cd ${path.join(
                 __dirname,

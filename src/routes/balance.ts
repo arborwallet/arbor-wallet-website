@@ -12,10 +12,12 @@ app.post('/api/v1/balance', async (req, res) => {
             return res.status(400).send('Invalid address');
         const address = new Address(addressText);
         if (!(address.prefix in forks))
-            return res.status(400).send('Invalid address prefix');
+            return res.status(400).send('Invalid fork');
+        if (!(address.prefix in fullNodes))
+            return res.status(400).send('Unimplemented fork');
         const result = await fullNodes[
             address.prefix as ForkName
-        ].getCoinRecordsByPuzzleHash(
+        ]!.getCoinRecordsByPuzzleHash(
             address.toHash().toString(),
             undefined,
             undefined,

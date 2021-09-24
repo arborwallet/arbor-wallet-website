@@ -5,7 +5,7 @@ import {
     CoinSpend,
     Hash,
     PrivateKey,
-    Signature
+    Signature,
 } from 'chia-tools';
 import path from 'path';
 import { quote } from 'shell-quote';
@@ -56,8 +56,10 @@ app.post('/api/v1/send', async (req, res) => {
         const destination = new Address(destinationText);
         if (!(destination.prefix in forks))
             return res.status(400).send('Invalid fork');
+        if (!(destination.prefix in fullNodes))
+            return res.status(400).send('Unimplemented fork');
         const totalAmount = amount + fee;
-        const node = fullNodes[destination.prefix as ForkName];
+        const node = fullNodes[destination.prefix as ForkName]!;
         const privateKey = await PrivateKey.from(privateKeyText);
         const publicKey = privateKey.getPublicKey();
         const compileResult = await executeCommand(

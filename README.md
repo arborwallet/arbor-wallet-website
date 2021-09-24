@@ -5,23 +5,34 @@ This is rough documentation of the API for ArborWallet. It currently supports ba
 
 ### Fork Structure
 * `name` String (e.g. `"Chia"`)
+* `unit` String (e.g. `"Mojo"`)
 * `ticker` String (e.g. `"xch"`)
-* `unit` String (e.g. `"mojo"`)
 * `precision` Integer (e.g. `12`)
 
-### Send Transaction Structure
+### Send Transaction Group Structure
 * `type` "send"
+* `transactions` List of Send Transaction
 * `timestamp` Integer (Milliseconds Since Epoch)
 * `block` Integer
+* `fee` Integer
+
+### Receive Transaction Group Structure
+* `type` "receive"
+* `transactions` List of Receive Transaction
+* `timestamp` Integer (Milliseconds Since Epoch)
+* `block` Integer
+* `fee` Integer
+
+### Send Transaction Structure
 * `destination` String (Address)
 * `amount` Integer
 
 ### Receive Transaction Structure
-* `type` "receive"
-* `timestamp` Integer (Milliseconds Since Epoch)
-* `block` Integer
 * `sender` String (Address)
 * `amount` Integer
+
+### Transaction Group Structure
+Either Receive Transaction Group or Send Transaction Group
 
 ### Transaction Structure
 Either Receive Transaction or Send Transaction
@@ -47,20 +58,30 @@ Recovers a keypair from a mnemonic phrase.
 * `public_key` String
 * `private_key` String
 
-### POST `/api/v1/wallet`
+### POST `/api/v1/fork`
+Fetches the fork object from its ticker symbol.
+#### Request
+* `fork` String
+#### Response
+* `fork` Fork
+
+### GET `/api/v1/forks`
+Fetches a list of fork objects.
+#### Response
+* `forks` List of Fork
+
+### POST `/api/v1/address`
 Converts a public key to a light wallet address. Wallet updates will be on new API versions, so continue using this version for old wallets.
 #### Request
 * `public_key` String
 * `fork` String (e.g. `"xch"`)
 #### Response
 * `address` String
-* `fork` Fork
 
 ### POST `/api/v1/balance`
 * `address` String
 #### Response
 * `balance` Integer
-* `fork` Fork
 
 ### POST `/api/v1/transactions`
 Fetches a list of wallet style transactions on a given address.
@@ -68,8 +89,6 @@ Fetches a list of wallet style transactions on a given address.
 * `address` String
 #### Response
 * `transactions` Transaction List
-* `balance` Integer
-* `fork` Fork
 
 ### POST `/api/v1/send`
 Sends a given amount to a destination, authorized by a private key. The wallet is calculated from the private key on the fly, so it doesn't have to be provided.
@@ -79,4 +98,4 @@ Sends a given amount to a destination, authorized by a private key. The wallet i
 * `amount` Integer
 * `fee` Integer
 #### Response
-* `fork` Fork
+* `status` "success"

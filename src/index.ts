@@ -22,7 +22,7 @@ app.use(
 app.use(express.static(path.resolve(__dirname, '..', 'static')));
 
 // Starts clients for each fork to interact with their networks.
-export const fullNodes: Record<ForkName, FullNode> = {
+export const fullNodes: Partial<Record<ForkName, FullNode>> = {
     xch: new FullNode(),
 };
 
@@ -30,6 +30,7 @@ export const fullNodes: Record<ForkName, FullNode> = {
 require('./routes/address');
 require('./routes/balance');
 require('./routes/fork');
+require('./routes/forks');
 require('./routes/keygen');
 require('./routes/recover');
 require('./routes/send');
