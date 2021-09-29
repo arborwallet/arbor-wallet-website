@@ -69,6 +69,10 @@ app.get('/', (_req, res) =>
 `)
 );
 
+app.get('/discord', (_req, res) =>
+    res.redirect('https://discord.gg/WT4qxy2JBV')
+);
+
 app.get('/privacy/en', (_req, res) =>
     res.status(200).send(`<h2>Privacy Policy</h2>
 <p>This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use a Digital Farming Initiative mobile app (the &ldquo;App&rdquo;). You are encouraged to review this Privacy Policy to be informed of updates. You will be deemed to have been made aware of, will be subject to, and will be deemed to have accepted any changes to the Privacy Policy by your continued use of the App. Please read this Privacy Policy very carefully. If you do not agree with the terms of this privacy policy, please do not access or use the App.</p>
