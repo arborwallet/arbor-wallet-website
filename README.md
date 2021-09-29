@@ -6,8 +6,10 @@ This is rough documentation of the API for ArborWallet. It currently supports ba
 ### Fork Structure
 * `name` String (e.g. `"Chia"`)
 * `unit` String (e.g. `"Mojo"`)
+* `logo` String (e.g. `"/icons/forks/chia.png"`)
 * `ticker` String (e.g. `"xch"`)
 * `precision` Integer (e.g. `12`)
+* `network_fee` Integer (e.g. `0`)
 
 ### Send Transaction Group Structure
 * `type` "send"
