@@ -45,7 +45,7 @@ app.post('/api/v1/send', async (req, res) => {
             amount <= 0
         )
             return res.status(400).send('Invalid amount');
-        if (!fee) return res.status(400).send('Missing fee');
+        if (fee === undefined) return res.status(400).send('Missing fee');
         if (
             typeof fee !== 'number' ||
             !isFinite(fee) ||
