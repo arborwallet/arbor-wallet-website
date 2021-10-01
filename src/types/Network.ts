@@ -1,4 +1,4 @@
-export interface ForkInfo {
+export interface NetworkInfo {
     name: string;
     unit: string;
     logo: string;
@@ -7,9 +7,9 @@ export interface ForkInfo {
     network_fee: number;
 }
 
-export type ForkName = 'xch' | 'xfl' | 'xdg';
+export type NetworkName = 'xch' | 'xfl' | 'xdg';
 
-export const forks: Record<ForkName, ForkInfo> = {
+export const networks: Record<NetworkName, NetworkInfo> = {
     xch: {
         name: 'Chia',
         unit: 'Mojo',

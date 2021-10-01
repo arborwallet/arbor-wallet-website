@@ -1,6 +1,6 @@
 import { Address } from 'chia-tools';
 import { app, fullNodes } from '..';
-import { ForkName, forks } from '../types/Fork';
+import { NetworkName, networks } from '../types/Network';
 import { Balance } from '../types/routes/Balance';
 import { logger } from '../utils/logger';
 
@@ -11,12 +11,12 @@ app.post('/api/v1/balance', async (req, res) => {
         if (typeof addressText !== 'string')
             return res.status(400).send('Invalid address');
         const address = new Address(addressText);
-        if (!(address.prefix in forks))
-            return res.status(400).send('Invalid fork');
+        if (!(address.prefix in networks))
+            return res.status(400).send('Invalid network');
         if (!(address.prefix in fullNodes))
-            return res.status(400).send('Unimplemented fork');
+            return res.status(400).send('Unimplemented network');
         const result = await fullNodes[
-            address.prefix as ForkName
+            address.prefix as NetworkName
         ]!.getCoinRecordsByPuzzleHash(
             address.toHash().toString(),
             undefined,

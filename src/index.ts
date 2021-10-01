@@ -3,7 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import path from 'path';
-import { ForkName } from './types/Fork';
+import { NetworkName } from './types/Network';
 import { logger, loggerMiddleware } from './utils/logger';
 
 // Reads the environment variables from the .env file.
@@ -21,16 +21,16 @@ app.use(
 );
 app.use(express.static(path.resolve(__dirname, '..', 'static')));
 
-// Starts clients for each fork to interact with their networks.
-export const fullNodes: Partial<Record<ForkName, FullNode>> = {
+// Starts clients for each network to interact with.
+export const fullNodes: Partial<Record<NetworkName, FullNode>> = {
     xch: new FullNode(),
 };
 
 // Requires all of the routes.
 require('./routes/address');
 require('./routes/balance');
-require('./routes/fork');
-require('./routes/forks');
+require('./routes/network');
+require('./routes/networks');
 require('./routes/keygen');
 require('./routes/recover');
 require('./routes/send');

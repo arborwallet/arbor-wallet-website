@@ -10,7 +10,7 @@ import {
 import path from 'path';
 import { quote } from 'shell-quote';
 import { app, fullNodes } from '..';
-import { ForkName, forks } from '../types/Fork';
+import { NetworkName, networks } from '../types/Network';
 import { Send } from '../types/routes/Send';
 import { executeCommand } from '../utils/execute';
 import { logger } from '../utils/logger';
@@ -54,12 +54,12 @@ app.post('/api/v1/send', async (req, res) => {
         )
             return res.status(400).send('Invalid fee');
         const destination = new Address(destinationText);
-        if (!(destination.prefix in forks))
-            return res.status(400).send('Invalid fork');
+        if (!(destination.prefix in networks))
+            return res.status(400).send('Invalid network');
         if (!(destination.prefix in fullNodes))
-            return res.status(400).send('Unimplemented fork');
+            return res.status(400).send('Unimplemented network');
         const totalAmount = amount + fee;
-        const node = fullNodes[destination.prefix as ForkName]!;
+        const node = fullNodes[destination.prefix as NetworkName]!;
         const privateKey = await PrivateKey.from(privateKeyText);
         const publicKey = privateKey.getPublicKey();
         const compileResult = await executeCommand(
