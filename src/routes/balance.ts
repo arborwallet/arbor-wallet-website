@@ -1,6 +1,6 @@
 import { Address } from 'chia-tools';
 import { app, fullNodes } from '..';
-import { NetworkName, networks } from '../types/Network';
+import { BlockchainName, blockchains } from '../types/Blockchain';
 import { Balance } from '../types/routes/Balance';
 import { logger } from '../utils/logger';
 
@@ -11,12 +11,12 @@ app.post('/api/v1/balance', async (req, res) => {
         if (typeof addressText !== 'string')
             return res.status(400).send('Invalid address');
         const address = new Address(addressText);
-        if (!(address.prefix in networks))
-            return res.status(400).send('Invalid network');
+        if (!(address.prefix in blockchains))
+            return res.status(400).send('Invalid blockchain');
         if (!(address.prefix in fullNodes))
-            return res.status(400).send('Unimplemented network');
+            return res.status(400).send('Unimplemented blockchain');
         const result = await fullNodes[
-            address.prefix as NetworkName
+            address.prefix as BlockchainName
         ]!.getCoinRecordsByPuzzleHash(
             address.toHash().toString(),
             undefined,

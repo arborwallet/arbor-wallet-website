@@ -1,22 +1,22 @@
-export interface NetworkInfo {
+export interface BlockchainInfo {
     name: string;
     unit: string;
     logo: string;
     ticker: string;
     precision: number;
-    network_fee: number;
+    blockchain_fee: number;
 }
 
-export type NetworkName = 'xch' | 'xfl' | 'xdg';
+export type BlockchainName = 'xch' | 'xfl' | 'xdg';
 
-export const networks: Record<NetworkName, NetworkInfo> = {
+export const blockchains: Record<BlockchainName, BlockchainInfo> = {
     xch: {
         name: 'Chia',
         unit: 'Mojo',
         logo: '/icons/forks/chia.png',
         ticker: 'xch',
         precision: 12,
-        network_fee: 0,
+        blockchain_fee: 0,
     },
     xfl: {
         name: 'Flora',
@@ -24,7 +24,7 @@ export const networks: Record<NetworkName, NetworkInfo> = {
         logo: '/icons/forks/flora.png',
         ticker: 'xfl',
         precision: 12,
-        network_fee: 0,
+        blockchain_fee: 0,
     },
     xdg: {
         name: 'Dogechia',
@@ -32,6 +32,6 @@ export const networks: Record<NetworkName, NetworkInfo> = {
         logo: '/icons/forks/dogechia.png',
         ticker: 'xdg',
         precision: 12,
-        network_fee: 0,
+        blockchain_fee: 0,
     },
 };

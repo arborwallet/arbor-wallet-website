@@ -2,21 +2,21 @@
 This is the API documentation for Arbor Wallet. It currently supports basic light wallet functionality.
 
 
-## Network Model
+## Blockchain Model
 `name` String  
 `unit` String  
 `logo` String  
 `ticker` String  
 `precision` Integer  
-`network_fee` Integer  
+`blockchain_fee` Integer  
 ```json
 {
     "name": "Chia",
     "unit": "Mojo",
-    "logo": "/icons/networks/chia.png",
+    "logo": "/icons/blockchains/chia.png",
     "ticker": "xch",
     "precision": 12,
-    "network_fee": 0
+    "blockchain_fee": 0
 }
 ```
 
@@ -129,44 +129,44 @@ Recovers a keypair from a mnemonic phrase.
 }
 ```
 
-## POST `/api/v1/network`
-Fetches the network object from its ticker symbol.
+## POST `/api/v1/blockchain`
+Fetches the blockchain object from its ticker symbol.
 ### Request
-`network` String  
+`blockchain` String  
 ```json
 {
-    "network": "xch"
+    "blockchain": "xch"
 }
 ```
 ### Response
-`network` Network  
+`blockchain` Blockchain  
 ```json
 {
-    "network" {
+    "blockchain" {
         "name": "Chia",
         "unit": "Mojo",
-        "logo": "/icons/networks/chia.png",
+        "logo": "/icons/blockchains/chia.png",
         "ticker": "xch",
         "precision": 12,
-        "network_fee": 0
+        "blockchain_fee": 0
     }
 }
 ```
 
-## GET `/api/v1/networks`
-Fetches a list of network objects.
+## GET `/api/v1/blockchains`
+Fetches a list of blockchain objects.
 ### Response
-`networks` List of Network  
+`blockchains` List of Blockchain  
 ```json
 {
-    "networks": [
+    "blockchains": [
         {
             "name": "Chia",
             "unit": "Mojo",
-            "logo": "/icons/networks/chia.png",
+            "logo": "/icons/blockchains/chia.png",
             "ticker": "xch",
             "precision": 12,
-            "network_fee": 0
+            "blockchain_fee": 0
         }
     ]
 }
@@ -176,11 +176,11 @@ Fetches a list of network objects.
 Converts a public key to a light wallet address. Wallet updates will be on new API versions, so continue using this version for old wallets.
 ### Request
 `public_key` String  
-`network` String (e.g. `"xch"`)  
+`blockchain` String (e.g. `"xch"`)  
 ```json
 {
     "public_key": "cafef00d",
-    "network": "xch"
+    "blockchain": "xch"
 }
 ```
 ### Response

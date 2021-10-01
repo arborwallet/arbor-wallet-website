@@ -10,7 +10,7 @@ import {
 import path from 'path';
 import { quote } from 'shell-quote';
 import { app, fullNodes } from '..';
-import { NetworkName, networks } from '../types/Network';
+import { BlockchainName, blockchains } from '../types/Blockchain';
 import { Send } from '../types/routes/Send';
 import { executeCommand } from '../utils/execute';
 import { logger } from '../utils/logger';
@@ -54,12 +54,12 @@ app.post('/api/v1/send', async (req, res) => {
         )
             return res.status(400).send('Invalid fee');
         const destination = new Address(destinationText);
-        if (!(destination.prefix in networks))
-            return res.status(400).send('Invalid network');
+        if (!(destination.prefix in blockchains))
+            return res.status(400).send('Invalid blockchain');
         if (!(destination.prefix in fullNodes))
-            return res.status(400).send('Unimplemented network');
+            return res.status(400).send('Unimplemented blockchain');
         const totalAmount = amount + fee;
-        const node = fullNodes[destination.prefix as NetworkName]!;
+        const node = fullNodes[destination.prefix as BlockchainName]!;
         const privateKey = await PrivateKey.from(privateKeyText);
         const publicKey = privateKey.getPublicKey();
         const compileResult = await executeCommand(
@@ -143,7 +143,7 @@ app.post('/api/v1/send', async (req, res) => {
         if (!pushTxResult.success)
             return res
                 .status(500)
-                .send('Could not push transaction to network');
+                .send('Could not push transaction to blockchain');
         res.status(200).send({
             status: 'success',
         } as Send);
