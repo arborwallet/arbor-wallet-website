@@ -1,9 +1,10 @@
-import { FullNode } from 'chia-tools';
+import { FullNode, getConfig, getConfigPath, getRootPath } from 'chia-tools';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
+import fs from 'fs';
 import path from 'path';
-import { BlockchainName } from './types/Blockchain';
+import { BlockchainInfo } from './types/Blockchain';
 import { logger, loggerMiddleware } from './utils/logger';
 
 // Reads the environment variables from the .env file.
@@ -22,9 +23,29 @@ app.use(
 app.use(express.static(path.resolve(__dirname, '..', 'static')));
 
 // Starts clients for each blockchain to interact with.
-export const fullNodes: Partial<Record<BlockchainName, FullNode>> = {
-    xch: new FullNode(),
-};
+export const fullNodes: Partial<Record<string, FullNode>> = {};
+export const blockchains: Record<string, BlockchainInfo> = {};
+
+for (const [name, blockchain] of Object.entries(
+    JSON.parse(
+        fs.readFileSync(
+            path.join(__dirname, '..', '..', 'blockchains.json'),
+            'utf8'
+        )
+    )
+)) {
+    const blockchainInfo: BlockchainInfo = blockchain as any;
+    blockchains[blockchainInfo.ticker] = blockchainInfo;
+    const config = getConfig(getConfigPath(getRootPath(name)));
+    fullNodes[blockchainInfo.ticker] = new FullNode({
+        protocol: 'https',
+        host: config.self_hostname,
+        port: config.full_node.rpc_port,
+        keyPath: config.daemon_ssl.private_key,
+        certPath: config.daemon_ssl.private_crt,
+        caCertPath: config.private_ssl_ca.crt,
+    });
+}
 
 // Requires all of the routes.
 require('./routes/address');

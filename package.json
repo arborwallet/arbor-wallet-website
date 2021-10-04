@@ -20,7 +20,7 @@
     "dependencies": {
         "@types/cors": "^2.8.12",
         "bytes.ts": "^1.0.3",
-        "chia-tools": "^2.1.3",
+        "chia-tools": "^2.2.0",
         "cors": "^2.8.5",
         "dotenv": "^10.0.0",
         "express": "^4.17.1",
