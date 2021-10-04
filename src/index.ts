@@ -38,21 +38,9 @@ for (const [rootPath, blockchain] of Object.entries(
         protocol: 'https',
         host: config.self_hostname,
         port: config.full_node.rpc_port,
-        keyPath: path.resolve(
-            rootPath,
-            'mainnet',
-            config.daemon_ssl.private_key
-        ),
-        certPath: path.resolve(
-            rootPath,
-            'mainnet',
-            config.daemon_ssl.private_crt
-        ),
-        caCertPath: path.resolve(
-            rootPath,
-            'mainnet',
-            config.private_ssl_ca.crt
-        ),
+        keyPath: path.resolve(rootPath, config.daemon_ssl.private_key),
+        certPath: path.resolve(rootPath, config.daemon_ssl.private_crt),
+        caCertPath: path.resolve(rootPath, config.private_ssl_ca.crt),
     });
 }
 
