@@ -1,0 +1,37 @@
+.social-discord,
+.social-github {
+    background-color: #333;
+    border-radius: 50%;
+}
+.social-reddit {
+    background-color: #ff4500;
+    border-radius: 50%;
+}
+.contact-color {
+    background-color: var(--bs-gray-100) !important;
+    background: var(--bs-gray-100) !important;
+}
+
+.navbar-shrink {
+    background-color: #4caf4f !important;
+}
+
+.nav-link {
+    color: #eeeeee !important;
+    font-size: 16px !important;
+    text-transform: initial !important;
+}
+
+.nav-link:hover {
+    color: #ffffff !important;
+}
+
+.navbar-brand img {
+    margin-right: 12px !important;
+}
+
+.navbar-brand {
+    color: #ffffff !important;
+    display: flex;
+    align-items: center;
+}
