@@ -28,10 +28,7 @@ export const blockchains: Record<string, BlockchainInfo> = {};
 
 for (const [name, blockchain] of Object.entries(
     JSON.parse(
-        fs.readFileSync(
-            path.join(__dirname, '..', '..', 'blockchains.json'),
-            'utf8'
-        )
+        fs.readFileSync(path.join(__dirname, '..', 'blockchains.json'), 'utf8')
     )
 )) {
     const blockchainInfo: BlockchainInfo = blockchain as any;
