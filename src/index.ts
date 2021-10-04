@@ -1,4 +1,4 @@
-import { FullNode, getConfig, getConfigPath, getRootPath } from 'chia-tools';
+import { FullNode, getConfig } from 'chia-tools';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
@@ -26,14 +26,14 @@ app.use(express.static(path.resolve(__dirname, '..', 'static')));
 export const fullNodes: Partial<Record<string, FullNode>> = {};
 export const blockchains: Record<string, BlockchainInfo> = {};
 
-for (const [name, blockchain] of Object.entries(
+for (const [configPath, blockchain] of Object.entries(
     JSON.parse(
         fs.readFileSync(path.join(__dirname, '..', 'blockchains.json'), 'utf8')
     )
 )) {
     const blockchainInfo: BlockchainInfo = blockchain as any;
     blockchains[blockchainInfo.ticker] = blockchainInfo;
-    const config = getConfig(getConfigPath(getRootPath(name)));
+    const config = getConfig(configPath);
     fullNodes[blockchainInfo.ticker] = new FullNode({
         protocol: 'https',
         host: config.self_hostname,
