@@ -1,7 +1,6 @@
 import { Hash } from 'chia-tools';
 import path from 'path';
-import { app, fullNodes } from '..';
-import { blockchains } from '../types/Blockchain';
+import { app, blockchains, fullNodes } from '..';
 import { Address } from '../types/routes/Address';
 import { executeCommand } from '../utils/execute';
 import { logger } from '../utils/logger';

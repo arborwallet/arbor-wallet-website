@@ -9,8 +9,7 @@ import {
 } from 'chia-tools';
 import path from 'path';
 import { quote } from 'shell-quote';
-import { app, fullNodes } from '..';
-import { BlockchainName, blockchains } from '../types/Blockchain';
+import { app, blockchains, fullNodes } from '..';
 import { Send } from '../types/routes/Send';
 import { executeCommand } from '../utils/execute';
 import { logger } from '../utils/logger';
@@ -59,7 +58,7 @@ app.post('/api/v1/send', async (req, res) => {
         if (!(destination.prefix in fullNodes))
             return res.status(400).send('Unimplemented blockchain');
         const totalAmount = amount + fee;
-        const node = fullNodes[destination.prefix as BlockchainName]!;
+        const node = fullNodes[destination.prefix]!;
         const privateKey = await PrivateKey.from(privateKeyText);
         const publicKey = privateKey.getPublicKey();
         const compileResult = await executeCommand(

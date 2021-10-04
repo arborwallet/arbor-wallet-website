@@ -1,6 +1,5 @@
 import { Address } from 'chia-tools';
-import { app, fullNodes } from '..';
-import { BlockchainName, blockchains } from '../types/Blockchain';
+import { app, blockchains, fullNodes } from '..';
 import { Balance } from '../types/routes/Balance';
 import { logger } from '../utils/logger';
 
@@ -16,7 +15,7 @@ app.post('/api/v1/balance', async (req, res) => {
         if (!(address.prefix in fullNodes))
             return res.status(400).send('Unimplemented blockchain');
         const result = await fullNodes[
-            address.prefix as BlockchainName
+            address.prefix
         ]!.getCoinRecordsByPuzzleHash(
             address.toHash().toString(),
             undefined,

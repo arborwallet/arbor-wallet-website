@@ -1,6 +1,5 @@
 import { Address, Hash } from 'chia-tools';
-import { app, fullNodes } from '..';
-import { BlockchainName, blockchains } from '../types/Blockchain';
+import { app, blockchains, fullNodes } from '..';
 import { Transactions } from '../types/routes/Transactions';
 import {
     ReceiveTransactionGroup,
@@ -20,7 +19,7 @@ app.post('/api/v1/transactions', async (req, res) => {
             return res.status(400).send('Invalid blockchain');
         if (!(address.prefix in fullNodes))
             return res.status(400).send('Unimplemented blockchain');
-        const node = fullNodes[address.prefix as BlockchainName]!;
+        const node = fullNodes[address.prefix]!;
         const recordsResult = await node.getCoinRecordsByPuzzleHash(
             address.toHash().toString(),
             undefined,

@@ -1,5 +1,4 @@
-import { app } from '..';
-import { BlockchainName, blockchains } from '../types/Blockchain';
+import { app, blockchains } from '..';
 import { Blockchain } from '../types/routes/Blockchain';
 import { logger } from '../utils/logger';
 
@@ -11,7 +10,7 @@ app.post('/api/v1/blockchain', async (req, res) => {
         if (!(blockchainNameText in blockchains))
             return res.status(400).send('Invalid blockchain');
         return res.status(200).send({
-            blockchain: blockchains[blockchainNameText as BlockchainName],
+            blockchain: blockchains[blockchainNameText],
         } as Blockchain);
     } catch (error) {
         logger.error(`${error}`);
