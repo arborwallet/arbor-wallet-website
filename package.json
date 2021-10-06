@@ -18,7 +18,6 @@
     ],
     "license": "MIT",
     "dependencies": {
-        "@types/cors": "^2.8.12",
         "bytes.ts": "^1.0.3",
         "chia-tools": "^2.2.0",
         "cors": "^2.8.5",
@@ -30,6 +29,7 @@
         "winston-daily-rotate-file": "^4.5.5"
     },
     "devDependencies": {
+        "@types/cors": "^2.8.12",
         "@types/express": "^4.17.13",
         "@types/node": "^16.7.0",
         "@types/shell-quote": "^1.7.1"
