@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "private": true,
     "main": "dist/index.js",
-    "repository": "https://github.com/Digital-Farming-Initiative/wallet-web",
+    "repository": "https://github.com/Digital-Farming-Initiative/arbor-wallet-website",
     "author": "Digital Farming Initiative",
     "scripts": {
         "build": "tsc",
