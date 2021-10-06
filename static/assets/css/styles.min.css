@@ -35,3 +35,11 @@
     display: flex;
     align-items: center;
 }
+
+.badge-link {
+    margin-right: 16px;
+}
+
+.badge-link:last-of-type {
+    margin-right: 0px;
+}
