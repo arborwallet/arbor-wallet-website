@@ -19,6 +19,7 @@ const extraData = hexToBytes(
 );
 
 app.post('/api/v1/send', async (req, res) => {
+    let privateKey, publicKey, signatures: Signature[] | undefined, aggregate;
     try {
         const {
             private_key: privateKeyText,
@@ -59,8 +60,8 @@ app.post('/api/v1/send', async (req, res) => {
             return res.status(400).send('Unimplemented blockchain');
         const totalAmount = amount + fee;
         const node = fullNodes[destination.prefix]!;
-        const privateKey = await PrivateKey.from(privateKeyText);
-        const publicKey = privateKey.getPublicKey();
+        privateKey = await PrivateKey.from(privateKeyText);
+        publicKey = privateKey.getPublicKey();
         const compileResult = await executeCommand(
             `cd ${path.join(
                 __dirname,
@@ -98,7 +99,7 @@ app.post('/api/v1/send', async (req, res) => {
         }
         if (spendAmount < totalAmount)
             return res.status(400).send('Insufficient funds');
-        const signatures: Signature[] = [];
+        signatures = [];
         const spends: CoinSpend[] = [];
         let target = true;
         const destinationHash = destination.toHash();
@@ -134,19 +135,27 @@ app.post('/api/v1/send', async (req, res) => {
                 solution: serializedSolution,
             });
         }
-        const signature = await Signature.from(signatures);
+        aggregate = await Signature.from(signatures);
         const pushTxResult = await node.pushTx({
             coin_spends: spends,
-            aggregated_signature: signature.toString(),
+            aggregated_signature: aggregate.toString(),
         });
         if (!pushTxResult.success)
             return res
                 .status(500)
                 .send('Could not push transaction to blockchain');
+        aggregate.delete();
+        for (const signature of signatures) signature.delete();
+        privateKey.delete();
+        publicKey.delete();
         res.status(200).send({
             status: 'success',
         } as Send);
     } catch (error) {
+        if (aggregate) aggregate.delete();
+        if (signatures) for (const signature of signatures) signature.delete();
+        if (privateKey) privateKey.delete();
+        if (publicKey) publicKey.delete();
         logger.error(`${error}`);
         return res.status(500).send('Could not send transaction');
     }
