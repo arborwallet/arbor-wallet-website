@@ -50,7 +50,7 @@ app.post('/api/v1/send', async (req, res) => {
             typeof fee !== 'number' ||
             !isFinite(fee) ||
             Math.floor(fee) !== fee ||
-            amount < 0
+            fee < 0
         )
             return res.status(400).send('Invalid fee');
         const destination = new Address(destinationText);
