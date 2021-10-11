@@ -87,7 +87,7 @@ app.post('/api/v1/send', async (req, res) => {
         calculator: while (records.length && spendAmount < totalAmount) {
             for (let i = 0; i < records.length; i++) {
                 if (spendAmount + records[i].coin.amount <= totalAmount) {
-                    const record = records.splice(i, 1)[0];
+                    const record = records.splice(i--, 1)[0];
                     spendRecords.push(record);
                     spendAmount += record.coin.amount;
                     continue calculator;
