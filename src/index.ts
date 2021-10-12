@@ -5,6 +5,7 @@ import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import { BlockchainInfo } from './types/Blockchain';
+import { withHomeDirectory } from './utils/home';
 import { logger, loggerMiddleware } from './utils/logger';
 
 // Reads the environment variables from the .env file.
@@ -26,11 +27,12 @@ app.use(express.static(path.resolve(__dirname, '..', 'static')));
 export const fullNodes: Partial<Record<string, FullNode>> = {};
 export const blockchains: Record<string, BlockchainInfo> = {};
 
-for (const [rootPath, blockchain] of Object.entries(
+for (let [rootPath, blockchain] of Object.entries(
     JSON.parse(
         fs.readFileSync(path.join(__dirname, '..', 'blockchains.json'), 'utf8')
     )
 )) {
+    rootPath = withHomeDirectory(rootPath);
     const blockchainInfo: BlockchainInfo = blockchain as any;
     blockchains[blockchainInfo.ticker] = blockchainInfo;
     const config = getConfig(getConfigPath(rootPath));
