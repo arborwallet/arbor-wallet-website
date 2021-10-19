@@ -1,9 +1,12 @@
 import { Hash } from 'chia-tools';
 import path from 'path';
-import { app, blockchains, fullNodes } from '..';
-import { Address } from '../types/routes/Address';
-import { executeCommand } from '../utils/execute';
-import { logger } from '../utils/logger';
+import { app, blockchains, fullNodes } from '../..';
+import { executeCommand } from '../../utils/execute';
+import { logger } from '../../utils/logger';
+
+interface Address {
+    address: string;
+}
 
 app.post('/api/v1/address', async (req, res) => {
     try {

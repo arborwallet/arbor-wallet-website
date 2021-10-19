@@ -1,6 +1,10 @@
-import { app, blockchains } from '..';
-import { Blockchain } from '../types/routes/Blockchain';
-import { logger } from '../utils/logger';
+import { app, blockchains } from '../..';
+import { BlockchainInfo } from '../../types/Blockchain';
+import { logger } from '../../utils/logger';
+
+interface Blockchain {
+    blockchain: BlockchainInfo;
+}
 
 app.post('/api/v1/blockchain', async (req, res) => {
     try {

@@ -1,7 +1,10 @@
 import { Address } from 'chia-tools';
-import { app, blockchains, fullNodes } from '..';
-import { Balance } from '../types/routes/Balance';
-import { logger } from '../utils/logger';
+import { app, blockchains, fullNodes } from '../..';
+import { logger } from '../../utils/logger';
+
+interface Balance {
+    balance: number;
+}
 
 app.post('/api/v1/balance', async (req, res) => {
     try {

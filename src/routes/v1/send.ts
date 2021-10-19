@@ -9,10 +9,13 @@ import {
 } from 'chia-tools';
 import path from 'path';
 import { quote } from 'shell-quote';
-import { app, blockchains, fullNodes } from '..';
-import { Send } from '../types/routes/Send';
-import { executeCommand } from '../utils/execute';
-import { logger } from '../utils/logger';
+import { app, blockchains, fullNodes } from '../..';
+import { executeCommand } from '../../utils/execute';
+import { logger } from '../../utils/logger';
+
+interface Send {
+    status: 'success';
+}
 
 const extraData = hexToBytes(
     'ccd5bb71183532bff220ba46c268991a3ff07eb358e8255a65c30a2dce0e5fbb'

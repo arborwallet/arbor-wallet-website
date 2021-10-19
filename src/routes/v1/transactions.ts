@@ -1,12 +1,15 @@
 import { Address, Hash } from 'chia-tools';
-import { app, blockchains, fullNodes } from '..';
-import { Transactions } from '../types/routes/Transactions';
+import { app, blockchains, fullNodes } from '../..';
 import {
     ReceiveTransactionGroup,
     SendTransactionGroup,
     TransactionGroup,
-} from '../types/TransactionGroup';
-import { logger } from '../utils/logger';
+} from '../../types/TransactionGroup';
+import { logger } from '../../utils/logger';
+
+interface Transactions {
+    transaction_groups: TransactionGroup[];
+}
 
 app.post('/api/v1/transactions', async (req, res) => {
     try {

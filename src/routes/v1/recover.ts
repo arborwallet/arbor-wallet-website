@@ -1,7 +1,12 @@
 import { Seed } from 'chia-tools';
-import { app } from '..';
-import { Recover } from '../types/routes/Recover';
-import { logger } from '../utils/logger';
+import { app } from '../..';
+import { logger } from '../../utils/logger';
+
+interface Recover {
+    phrase: string;
+    private_key: string;
+    public_key: string;
+}
 
 app.post('/api/v1/recover', async (req, res) => {
     let privateKey, publicKey;

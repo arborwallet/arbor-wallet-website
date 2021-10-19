@@ -45,14 +45,14 @@ for (const [rootPath, blockchain] of Object.entries(
 }
 
 // Requires all of the routes.
-require('./routes/address');
-require('./routes/balance');
-require('./routes/blockchain');
-require('./routes/blockchains');
-require('./routes/keygen');
-require('./routes/recover');
-require('./routes/send');
-require('./routes/transactions');
+require('./routes/v1/address');
+require('./routes/v1/balance');
+require('./routes/v1/blockchain');
+require('./routes/v1/blockchains');
+require('./routes/v1/keygen');
+require('./routes/v1/recover');
+require('./routes/v1/send');
+require('./routes/v1/transactions');
 
 app.get('/', (_req, res) =>
     res.status(200).send(`

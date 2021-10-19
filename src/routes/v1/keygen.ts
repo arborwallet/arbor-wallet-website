@@ -1,7 +1,12 @@
 import { Seed } from 'chia-tools';
-import { app } from '..';
-import { Keygen } from '../types/routes/Keygen';
-import { logger } from '../utils/logger';
+import { app } from '../..';
+import { logger } from '../../utils/logger';
+
+interface Keygen {
+    phrase: string;
+    private_key: string;
+    public_key: string;
+}
 
 app.get('/api/v1/keygen', async (_req, res) => {
     let privateKey, publicKey;
