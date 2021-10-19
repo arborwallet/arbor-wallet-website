@@ -26,11 +26,12 @@ app.use(express.static(path.resolve(__dirname, '..', 'static')));
 // Starts clients for each blockchain to interact with.
 export const fullNodes: Partial<Record<string, FullNode>> = {};
 export const blockchains: Record<string, BlockchainInfo> = {};
+export const sourceDir = __dirname;
+export const blockchainFile = path.join(sourceDir, '..', 'blockchains.json');
+export const routeDir = path.join(sourceDir, 'routes');
 
 for (let [rootPath, blockchain] of Object.entries(
-    JSON.parse(
-        fs.readFileSync(path.join(__dirname, '..', 'blockchains.json'), 'utf8')
-    )
+    JSON.parse(fs.readFileSync(blockchainFile, 'utf8'))
 )) {
     rootPath = withHomeDirectory(rootPath);
     const blockchainInfo: BlockchainInfo = blockchain as any;
@@ -47,14 +48,13 @@ for (let [rootPath, blockchain] of Object.entries(
 }
 
 // Requires all of the routes.
-require('./routes/v1/address');
-require('./routes/v1/balance');
-require('./routes/v1/blockchain');
-require('./routes/v1/blockchains');
-require('./routes/v1/keygen');
-require('./routes/v1/recover');
-require('./routes/v1/send');
-require('./routes/v1/transactions');
+for (const version of fs.readdirSync(routeDir)) {
+    if (!/^v[0-9]+$/.test(version)) continue;
+    for (const file of fs.readdirSync(path.join(routeDir, version))) {
+        if (!/\.js$/.test(file)) continue;
+        require(path.resolve(routeDir, version, file));
+    }
+}
 
 app.get('/', (_req, res) =>
     res.status(200).send(`
