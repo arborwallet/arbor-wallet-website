@@ -6,6 +6,7 @@ import {
     Hash,
     PrivateKey,
     Signature,
+    stripHex,
 } from 'chia-tools';
 import path from 'path';
 import { quote } from 'shell-quote';
@@ -16,10 +17,6 @@ import { logger } from '../../utils/logger';
 interface Send {
     status: 'success';
 }
-
-const extraData = hexToBytes(
-    'ccd5bb71183532bff220ba46c268991a3ff07eb358e8255a65c30a2dce0e5fbb'
-);
 
 app.post('/api/v1/send', async (req, res) => {
     let privateKey, publicKey, signatures: Signature[] | undefined, aggregate;
@@ -63,6 +60,7 @@ app.post('/api/v1/send', async (req, res) => {
             return res.status(400).send('Unimplemented blockchain');
         const totalAmount = amount + fee;
         const node = fullNodes[destination.prefix]!;
+        const blockchain = blockchains[destination.prefix]!;
         privateKey = await PrivateKey.from(privateKeyText);
         publicKey = privateKey.getPublicKey();
         const compileResult = await executeCommand(
@@ -129,7 +127,11 @@ app.post('/api/v1/send', async (req, res) => {
             const coinId = Hash.coin(record.coin);
             signatures.push(
                 privateKey.sign(
-                    concatBytes(solutionResult.bytes, coinId.bytes, extraData)
+                    concatBytes(
+                        solutionResult.bytes,
+                        coinId.bytes,
+                        hexToBytes(stripHex(blockchain.extra_data))
+                    )
                 )
             );
             spends.push({
@@ -139,10 +141,14 @@ app.post('/api/v1/send', async (req, res) => {
             });
         }
         aggregate = await Signature.from(signatures);
-        const pushTxResult = await node.pushTx({
+        console.log('Aggregate', aggregate.toString());
+        const bundle = {
             coin_spends: spends,
             aggregated_signature: aggregate.toString(),
-        });
+        };
+        console.log('Bundle', bundle);
+        const pushTxResult = await node.pushTx(bundle);
+        console.log('Result', pushTxResult);
         if (!pushTxResult.success)
             return res
                 .status(500)
