@@ -80,9 +80,11 @@ app.post('/api/v1/send', async (req, res) => {
         if (!coinRecordResult.success)
             return res.status(500).send('Could not fetch coin records');
         const records = coinRecordResult.coin_records.filter(
-            (record) => !record.spent
+            (record: CoinRecord) => !record.spent
         );
-        records.sort((a, b) => b.coin.amount - a.coin.amount);
+        records.sort(
+            (a: CoinRecord, b: CoinRecord) => b.coin.amount - a.coin.amount
+        );
         const spendRecords: CoinRecord[] = [];
         let spendAmount = 0;
         calculator: while (records.length && spendAmount < totalAmount) {
@@ -141,14 +143,11 @@ app.post('/api/v1/send', async (req, res) => {
             });
         }
         aggregate = await Signature.from(signatures);
-        console.log('Aggregate', aggregate.toString());
         const bundle = {
             coin_spends: spends,
             aggregated_signature: aggregate.toString(),
         };
-        console.log('Bundle', bundle);
         const pushTxResult = await node.pushTx(bundle);
-        console.log('Result', pushTxResult);
         if (!pushTxResult.success)
             return res
                 .status(500)
