@@ -132,7 +132,7 @@ app.post('/api/v1/send', async (req, res) => {
                     concatBytes(
                         solutionResult.bytes,
                         coinId.bytes,
-                        hexToBytes(stripHex(blockchain.extra_data))
+                        hexToBytes(stripHex(blockchain.agg_sig_me_extra_data))
                     )
                 )
             );

@@ -3,7 +3,7 @@ export interface BlockchainInfo {
     unit: string;
     logo: string;
     ticker: string;
-    extra_data: string;
+    agg_sig_me_extra_data: string;
     precision: number;
     blockchain_fee: number;
 }

@@ -32,9 +32,9 @@ export const routeDir = path.join(sourceDir, 'routes');
 
 for (let [rootPath, blockchain] of Object.entries(
     JSON.parse(fs.readFileSync(blockchainFile, 'utf8'))
-)) {
+) as [string, any][]) {
     rootPath = withHomeDirectory(rootPath);
-    const blockchainInfo: BlockchainInfo = blockchain as any;
+    const blockchainInfo: BlockchainInfo = blockchain;
     blockchains[blockchainInfo.ticker] = blockchainInfo;
     const config = getConfig(getConfigPath(rootPath));
     fullNodes[blockchainInfo.ticker] = new FullNode({

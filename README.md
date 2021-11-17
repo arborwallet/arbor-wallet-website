@@ -8,7 +8,7 @@ This is the API documentation for Arbor Wallet. It currently supports basic ligh
 `unit` String  
 `logo` String  
 `ticker` String  
-`extra_data` String  
+`agg_sig_me_extra_data` String  
 `precision` Integer  
 `blockchain_fee` Integer
 
@@ -18,7 +18,7 @@ This is the API documentation for Arbor Wallet. It currently supports basic ligh
     "unit": "Mojo",
     "logo": "/icons/blockchains/chia.png",
     "ticker": "xch",
-    "extra_data": "ccd5bb71183532bff220ba46c268991a3ff07eb358e8255a65c30a2dce0e5fbb",
+    "agg_sig_me_extra_data": "ccd5bb71183532bff220ba46c268991a3ff07eb358e8255a65c30a2dce0e5fbb",
     "precision": 12,
     "blockchain_fee": 0
 }
@@ -179,7 +179,7 @@ Fetches the blockchain object from its ticker symbol.
         "unit": "Mojo",
         "logo": "/icons/blockchains/chia.png",
         "ticker": "xch",
-        "extra_data": "ccd5bb71183532bff220ba46c268991a3ff07eb358e8255a65c30a2dce0e5fbb",
+        "agg_sig_me_extra_data": "ccd5bb71183532bff220ba46c268991a3ff07eb358e8255a65c30a2dce0e5fbb",
         "precision": 12,
         "blockchain_fee": 0
     }
@@ -202,7 +202,7 @@ Fetches a list of blockchain objects.
             "unit": "Mojo",
             "logo": "/icons/blockchains/chia.png",
             "ticker": "xch",
-            "extra_data": "ccd5bb71183532bff220ba46c268991a3ff07eb358e8255a65c30a2dce0e5fbb",
+            "agg_sig_me_extra_data": "ccd5bb71183532bff220ba46c268991a3ff07eb358e8255a65c30a2dce0e5fbb",
             "precision": 12,
             "blockchain_fee": 0
         }
