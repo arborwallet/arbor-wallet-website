@@ -23,7 +23,10 @@ app.post('/api/v2/records', async (req, res) => {
         if (!result.success)
             return res.status(500).send('Could not fetch coin records');
         res.status(200).send({
-            records: result.coin_records,
+            records: result.coin_records.map((record) => ({
+                ...record,
+                spent: record.spent_block_index !== 0,
+            })),
         } as Records);
     } catch (error) {
         logger.error(`${error}`);
