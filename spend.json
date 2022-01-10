@@ -1,0 +1,16 @@
+{
+    "spend_bundle": {
+        "coin_spends": [
+            {
+                "coin": {
+                    "parent_coin_info": "0x15f181b6238acc9c7d74b1afad945aecf93a41b88b2364477e097517ffdd5442",
+                    "puzzle_hash": "0x41e148d41a89632cca60df7871329a95c1a0ecdb743cab0ed8b91b5bae09390a",
+                    "amount": 97
+                },
+                "puzzle_reveal": "ff02ffff01ff02ffff01ff04ffff04ff04ffff04ff05ffff04ffff02ff06ffff04ff02ffff04ff0bff80808080ff80808080ff0b80ffff04ffff01ff32ff02ffff03ffff07ff0580ffff01ff0bffff0102ffff02ff06ffff04ff02ffff04ff09ff80808080ffff02ff06ffff04ff02ffff04ff0dff8080808080ffff01ff0bffff0101ff058080ff0180ff018080ffff04ffff01b0b9850fea622d3c4466548954f91ba72f705a85e20b14bafabcb5de1eb615335c2e76288d93b74664207d89f5819a3c1bff018080",
+                "solution": "ffffff33ffa041e148d41a89632cca60df7871329a95c1a0ecdb743cab0ed8b91b5bae09390aff0180ffff33ffa041e148d41a89632cca60df7871329a95c1a0ecdb743cab0ed8b91b5bae09390aff60808080"
+            }
+        ],
+        "aggregated_signature": "b22e63a5df100835d1c3d539638bef242631b7595e588f2f2b0a7bc94d799a7aebe55cb71c7adeb92ac86ac13001c98205c0df46394c98aa146ee1aadb39d5ddd4d7fb731590c56ba4fe649f76ba8ce95a2ea30073b632ad4df6fa5d0f002b04"
+    }
+}
