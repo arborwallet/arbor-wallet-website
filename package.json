@@ -11,6 +11,7 @@
     },
     "license": "MIT",
     "dependencies": {
+        "bip39": "^3.1.0",
         "chia-bls": "^1.0.1",
         "chia-rpc": "^1.0.2",
         "clvm-lib": "^1.0.0",
