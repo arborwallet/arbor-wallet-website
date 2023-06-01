@@ -1,4 +1,4 @@
-import { FullNode, getConfig, getConfigPath } from 'chia-tools';
+import { FullNode } from 'chia-rpc';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
@@ -10,6 +10,9 @@ import { logger, loggerMiddleware } from './utils/logger';
 
 // Reads the environment variables from the .env file.
 dotenv.config();
+
+const DISCORD_INVITE = process.env.DISCORD_INVITE!;
+if (!DISCORD_INVITE) throw new Error('Missing `DISCORD_INVITE` environment variable.');
 
 // Sets up the express application instance with middleware.
 export const app = express();
@@ -36,15 +39,7 @@ for (let [rootPath, blockchain] of Object.entries(
     rootPath = withHomeDirectory(rootPath);
     const blockchainInfo: BlockchainInfo = blockchain;
     blockchains[blockchainInfo.ticker] = blockchainInfo;
-    const config = getConfig(getConfigPath(rootPath));
-    fullNodes[blockchainInfo.ticker] = new FullNode({
-        protocol: 'https',
-        host: config.self_hostname,
-        port: config.full_node.rpc_port,
-        keyPath: path.resolve(rootPath, config.daemon_ssl.private_key),
-        certPath: path.resolve(rootPath, config.daemon_ssl.private_crt),
-        caCertPath: path.resolve(rootPath, config.private_ssl_ca.crt),
-    });
+    fullNodes[blockchainInfo.ticker] = new FullNode(rootPath);
 }
 
 // Requires all of the routes.
@@ -57,7 +52,7 @@ for (const version of fs.readdirSync(routeDir)) {
 }
 
 app.get('/discord', (_req, res) =>
-    res.redirect('https://discord.gg/WT4qxy2JBV')
+    res.redirect(DISCORD_INVITE)
 );
 
 // Listen on the configured port, falling back to port 80.

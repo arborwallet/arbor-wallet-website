@@ -3,35 +3,28 @@
     "version": "1.0.0",
     "private": true,
     "main": "dist/index.js",
-    "repository": "https://github.com/Digital-Farming-Initiative/arbor-wallet-website",
-    "author": "Digital Farming Initiative",
+    "repository": "https://github.com/arborwallet/arbor-wallet-website",
+    "author": "Rigidity",
     "scripts": {
         "build": "tsc",
-        "start": ". venv/bin/activate && node --enable-source-maps ."
+        "start": "node --enable-source-maps ."
     },
-    "contributors": [
-        {
-            "name": "Rigidity",
-            "email": "rigidity@rigidblockchain.com",
-            "url": "https://github.com/Rigidity"
-        }
-    ],
     "license": "MIT",
     "dependencies": {
-        "bytes.ts": "^1.0.3",
-        "chia-tools": "^2.2.2",
+        "chia-bls": "^1.0.1",
+        "chia-rpc": "^1.0.2",
+        "clvm-lib": "^1.0.0",
         "cors": "^2.8.5",
         "dotenv": "^10.0.0",
-        "express": "^4.17.1",
-        "express-winston": "^4.1.0",
-        "shell-quote": "^1.7.2",
-        "winston": "^3.3.3",
-        "winston-daily-rotate-file": "^4.5.5"
+        "express": "^4.18.2",
+        "express-winston": "^4.2.0",
+        "winston": "^3.9.0",
+        "winston-daily-rotate-file": "^4.7.1"
     },
     "devDependencies": {
-        "@types/cors": "^2.8.12",
-        "@types/express": "^4.17.13",
-        "@types/node": "^16.7.0",
-        "@types/shell-quote": "^1.7.1"
+        "@types/cors": "^2.8.13",
+        "@types/express": "^4.17.17",
+        "@types/node": "^16.18.34",
+        "typescript": "^5.0.4"
     }
 }
