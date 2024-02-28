@@ -84,14 +84,14 @@ app.post('/api/v1/send', async (req, res) => {
         ]);
 
         const coinRecordResult = await node.getCoinRecordsByPuzzleHash(
-            puzzle.hashHex()
+            puzzle.hashHex(),
         );
 
         if (!coinRecordResult.success)
             return res.status(500).send('Could not fetch coin records');
 
         const records = coinRecordResult.coin_records.filter(
-            (record) => !record.spent
+            (record) => !record.spent,
         );
 
         records.sort((a, b) => b.coin.amount - a.coin.amount);
@@ -128,16 +128,16 @@ app.post('/api/v1/send', async (req, res) => {
                 `((${
                     target
                         ? `(51 ${formatHex(
-                              toHex(destination.hash)
+                              toHex(destination.hash),
                           )} ${amount})${
                               change > 0
                                   ? ` (51 ${formatHex(
-                                        puzzle.hashHex()
+                                        puzzle.hashHex(),
                                     )} ${change})`
                                   : ''
                           }`
                         : ''
-                }))`
+                }))`,
             );
 
             target = false;
@@ -150,9 +150,9 @@ app.post('/api/v1/send', async (req, res) => {
                     concatBytes(
                         solution.hash(),
                         coinId,
-                        fromHex(sanitizeHex(blockchain.agg_sig_me_extra_data))
-                    )
-                )
+                        fromHex(sanitizeHex(blockchain.agg_sig_me_extra_data)),
+                    ),
+                ),
             );
 
             spends.push({
@@ -171,10 +171,15 @@ app.post('/api/v1/send', async (req, res) => {
 
         const pushTxResult = await node.pushTx(bundle);
 
-        if (!pushTxResult.success)
+        if (!pushTxResult.success) {
+            console.log(bundle);
+            console.log('\n\n');
+            console.log('ERROR: ', pushTxResult.error);
+
             return res
                 .status(500)
                 .send('Could not push transaction to blockchain');
+        }
 
         res.status(200).send({
             status: 'success',
